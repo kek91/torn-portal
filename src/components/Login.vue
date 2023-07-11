@@ -1,23 +1,11 @@
 <script>
 export default {
     name: 'Login',
-    data() {
-        return {
-            foo: "bar"
-        }
-    },
-    // props: {
-    //     apiKey: {
-    //         type: String,
-    //         required: false
-    //     }
-    // },
     methods: {
         async verifyKey(e) {
             e.preventDefault();
 
             let inputApiKey = document.getElementById('inputApiKey').value;
-            console.log(inputApiKey);
 
             const response = await fetch(`https://api.torn.com/user/?selections=basic&key=${inputApiKey}`);
             const userData = await response.json();
@@ -31,41 +19,14 @@ export default {
                 });
             }
             else {
-                this.$emit('setUser', userData);
+                const user = {id: userData.player_id, name: userData.name, apiKey: inputApiKey};
+                this.$emit('setUser', user);
                 this.$notify({
                     title: "Authentication successful",
-                    text: `Hi ${userData.name}!`,
+                    text: `Hi ${user.name}!`,
                     type: "success"
                 });
             }
-
-            console.log(userData);
-
-            console.log("Verifying...");
-            const user = {
-                "level": 80,
-                "gender": "Female",
-                "player_id": 2596327,
-                "name": "Kvassh",
-                "status": {
-                    "description": "Okay",
-                    "details": "",
-                    "state": "Okay",
-                    "color": "green",
-                    "until": 0,
-                },
-            };
-            setTimeout(() => {
-                document.getElementById('loginresult').innerHTML = 'Verifying API token...';
-                setTimeout(() => {
-                    document.getElementById('loginresult').innerHTML = 'Result:';
-                    setTimeout(() => {
-                        document.getElementById('loginresult').innerHTML = `Result:<br><br>${JSON.parse(JSON.stringify(user))}`;
-
-                        this.$emit('setUser', user);
-                    }, 500)
-                }, 500)
-            }, 10)
         }
     }
 }
@@ -74,6 +35,7 @@ export default {
 </script>
 
 <template>
+
     <div>
 
         <h1>Login</h1>
@@ -84,14 +46,6 @@ export default {
             <input type="submit" class="btn btn-primary" value="Login">
         </form>
 
-        <div id="loginresult"></div>
     </div>
 
 </template>
-
-<style scoped>
-h1 {
-    margin:0;
-}
-
-</style>
