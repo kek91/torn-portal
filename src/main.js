@@ -1,4 +1,5 @@
-import './assets/pico.classless.min.css'
+// import './assets/pico.classless.min.css'
+import './assets/pico.min.css'
 
 import { createApp,h } from 'vue'
 import App from './App.vue'
