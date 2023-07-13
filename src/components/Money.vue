@@ -246,7 +246,7 @@ export default {
         </table>
     </article>
 
-    <article v-else>
+    <article id="sectionMoney" v-else>
         Sorry, unable to fetch logs...
     </article>
 
