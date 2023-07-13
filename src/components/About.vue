@@ -37,9 +37,12 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
+        <li><b>0.2.1</b><br>
+            - Money log can fetch logs for Today, Last 7 days or Last 30 days
+        </li>
         <li><b>0.2.0</b><br>
             - Implemented the Money feature<br>
-            - Misc layout adjustments<br>
+            - Misc layout adjustments
         </li>
         <li><b>0.1.0</b><br>
             - Initial release<br>

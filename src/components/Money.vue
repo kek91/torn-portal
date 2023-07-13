@@ -251,9 +251,9 @@ export default {
     </article>
 
     <div class="grid">
-        <a href="#" id="btnFetchLog" role="button" @click="refreshData(1)">Load today</a>
-        <a href="#" id="btnFetchLog" role="button" @click="refreshData(7)">Load for 7 days</a>
-        <a href="#" id="btnFetchLog" role="button" @click="refreshData(30)">Load for 30 days</a>
+        <a href="#" id="btnFetchLog" role="button" @click="refreshData(1)">Today</a>
+        <a href="#" id="btnFetchLog" role="button" @click="refreshData(7)">Last 7 days</a>
+        <a href="#" id="btnFetchLog" role="button" @click="refreshData(30)">Last 30 days</a>
     </div>
 </template>
 
