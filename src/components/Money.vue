@@ -14,7 +14,7 @@ export default {
         }
     },
     methods: {
-        async fetchLog() {
+        async fetchLog(days) {
 
             let btnFetchLog = document.getElementById('btnFetchLog');
             let sectionMoney = document.getElementById('sectionMoney');
@@ -24,12 +24,12 @@ export default {
                 sectionMoney.setAttribute('aria-busy', 'true');
 
                 const date = new Date();
-                const from = Math.round(date.setMonth(date.getMonth()-1) / 1000);
+                const from = Math.round(date.setDate(date.getDate()-days) / 1000);
                 const to = Math.round(from+(3600*24));
 
                 let logs;
 
-                for (let i = 0; i < 30; i++) {
+                for (let i = 0; i < days; i++) {
                     const response = await fetch(`https://api.torn.com/user/?selections=log&cat=13&from=${from}&to=${(to+(i*(3600*24)))}&comment=tornportal&key=${this.user.apiKey}`);
                     const data = await response.json();
 
@@ -174,8 +174,8 @@ export default {
             };
 
         },
-        refreshData() {
-            this.fetchLog().then((log) => {
+        refreshData(days) {
+            this.fetchLog(days).then((log) => {
                 if (log != null) {
                     console.log("Fetched log from Torn API! Saving to localStorage");
                     localStorage.setItem('log', JSON.stringify(log));
@@ -194,7 +194,7 @@ export default {
             let log = JSON.parse(localStorage.getItem('log'));
             this.log = this.filterLog(log);
         } else {
-            this.refreshData();
+            this.refreshData(1);
         }
     }
 }
@@ -250,8 +250,11 @@ export default {
         Sorry, unable to fetch logs...
     </article>
 
-    <a href="#" id="btnFetchLog" role="button" @click="refreshData">Refresh</a>
-
+    <div class="grid">
+        <a href="#" id="btnFetchLog" role="button" @click="refreshData(1)">Load today</a>
+        <a href="#" id="btnFetchLog" role="button" @click="refreshData(7)">Load for 7 days</a>
+        <a href="#" id="btnFetchLog" role="button" @click="refreshData(30)">Load for 30 days</a>
+    </div>
 </template>
 
 <style scoped>
