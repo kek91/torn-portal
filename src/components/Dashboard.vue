@@ -73,9 +73,8 @@ export default {
 
 <template>
 
-    <h1>Hi <a :href="`https://www.torn.com/profiles.php?XID=${user.id}`" target="_blank">{{ user.name }} [{{ user.id }}]</a>!</h1>
+    <h1>Dashboard</h1>
 
-    <h2>Tools</h2>
     <div class="grid">
         <a href="#" @click="this.$emit('setRouter', 'money')" role="button" class="secondary">Money</a>
         <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
@@ -84,11 +83,9 @@ export default {
         <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
     </div>
 
-    <h2>Your Torn profile</h2>
-
     <article id="sectionDashboard" v-if="profile != null">
-
         <table>
+            <tr><td>Name</td><td><a :href="`https://www.torn.com/profiles.php?XID=${user.id}`" target="_blank">{{ user.name }} [{{ user.id }}]</a></td></tr>
             <tr><td>Rank</td><td>{{ profile.rank }}</td></tr>
             <tr><td>Level</td><td>{{ profile.level }}</td></tr>
             <tr><td>Age</td><td>{{ profile.age }} ({{ ageInHumanOutput(profile.age) }})</td></tr>
@@ -97,13 +94,12 @@ export default {
             <tr><td>Friends</td><td class="success">{{ profile.friends }}</td></tr>
             <tr><td>Enemies</td><td class="danger">{{ profile.enemies }}</td></tr>
         </table>
+    </article>
 
+    <article v-else>
+        Sorry, unable to fetch data...
     </article>
 
     <a href="#" id="btnFetchProfile" role="button" @click="fetchProfile">Refresh</a>
 
 </template>
-
-<style scoped>
-
-</style>
