@@ -37,16 +37,13 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
-        <li><b>0.2.2</b><br>
+        <li><b>0.2.x</b><br>
             - Adapted error handler for authentication because Torn API returns 200 for incorrect API key instead of 401 Unauthorized which would be more fitting<br>
-            - Fix potential null point exception when fetching money logs
-        </li>
-        <li><b>0.2.1</b><br>
-            - Money log can fetch logs for Today, Last 7 days or Last 30 days
-        </li>
-        <li><b>0.2.0</b><br>
+            - Fix potential null point exception when fetching money logs<br>
+            - Money log can fetch logs for Today, Last 7 days or Last 30 days<br>
             - Implemented the Money feature<br>
-            - Misc layout adjustments
+            - Misc layout adjustments<br>
+            - Add temporary favicon
         </li>
         <li><b>0.1.0</b><br>
             - Initial release<br>
