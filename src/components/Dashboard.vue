@@ -25,8 +25,11 @@ export default {
                 const response = await fetch(`https://api.torn.com/user/?selections=profile&key=${this.user.apiKey}`);
                 const data = await response.json();
 
-                if (data.hasOwnProperty('error')) {
-                    throw `API Error: ${$data.error.error}`;
+                if(!response.ok) {
+                    if (data.hasOwnProperty('error')) {
+                        throw `API Error: ${$data.error.error}`;
+                    }
+                    throw `API Error: Unknown`;
                 }
 
                 this.profile = data;
