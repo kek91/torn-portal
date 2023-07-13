@@ -58,7 +58,7 @@ export default {
     <header>
         <nav>
             <ul>
-                <li><a href="#dashboard" @click="setRouter('dashboard')"><b>Torn Portal</b> <small>v{{ appVersion }}</small></a></li>
+                <li><a href="#dashboard" @click="setRouter('dashboard')"><b>Torn Portal</b></a> <a href="#about" @click="setRouter('about')"><small>v{{ appVersion }}</small></a></li>
             </ul>
             <ul v-if="user != null">
                 <li><a href="#dashboard" @click="setRouter('dashboard')">Dashboard</a></li>

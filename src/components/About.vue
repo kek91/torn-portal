@@ -37,9 +37,24 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
-        <li><b>0.1.1</b> - TBA...</li>
-        <li><b>0.1.0</b> - Initial release</li>
+        <li><b>0.2.0</b><br>
+            - Implemented the Money feature<br>
+            - Misc layout adjustments<br>
+        </li>
+        <li><b>0.1.0</b><br>
+            - Initial release<br>
+            - Automatic build & deploy to netlify
+        </li>
     </ul>
+    <p>
+        Versioning explanation <small>(Major.Minor.Patch)</small><br>
+        Major: New major overhauls or breaking features<br>
+        Minor: New features, adjustments or bug fixes<br>
+        Patch: Very minor bugfixes or stuff like typos etc
+    </p>
+    <p>
+        Note: Torn Portal is still in beta and will therefore remain at major version 0 until deemed production ready.
+    </p>
 
 
 
