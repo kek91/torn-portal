@@ -1,8 +1,8 @@
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 import Login from "@/components/Login.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import Money from "@/components/Money.vue";
+import About from "@/components/About.vue";
 import {useNotification} from "@kyvg/vue3-notification";
 import {version} from '../package.json'
 
@@ -11,10 +11,10 @@ const {notify} = useNotification()
 export default {
     name: 'App',
     components: {
-        HelloWorld,
         Login,
         Dashboard,
-        Money
+        Money,
+        About
     },
     data() {
         return {
@@ -48,6 +48,8 @@ export default {
             this.user = JSON.parse(localStorage.getItem('user'));
             console.log(`Loaded data from cache. Welcome back ${this.user.name} :)`);
         }
+
+        // this.user = null;
     }
 }
 </script>
@@ -63,7 +65,16 @@ export default {
             </ul>
             <ul v-else>
                 <li><a href="#dashboard" @click="setRouter('dashboard')">Dashboard</a></li>
-                <li><a href="#money" @click="setRouter('money')">Money</a></li>
+                <li role="list"><a href="#" aria-haspopup="dropdownTools">Tools</a>
+                    <ul role="dropdownTools">
+                        <li><a href="#money" @click="setRouter('money')">Money</a></li>
+                        <li><a href="#" disabled="true">TBA</a></li>
+                        <li><a href="#" disabled="true">TBA</a></li>
+                        <li><a href="#" disabled="true">TBA</a></li>
+                        <li><a href="#" disabled="true">TBA</a></li>
+                    </ul>
+                </li>
+                <li><a href="#about" @click="setRouter('about')">About</a></li>
                 <li><a href="#logout" @click="logout">Logout</a></li>
             </ul>
         </nav>
@@ -84,6 +95,10 @@ export default {
                     v-else-if="router === 'money'"
                     :user="user"
             ></Money>
+            <About
+                    v-else-if="router === 'about'"
+                    :user="user"
+            ></About>
         </div>
 
     </main>
@@ -98,34 +113,34 @@ export default {
 
 <style>
 
-
 header {
     background: #333;
-}
-
-header h1 {
-    color: #fff;
-    font-weight: 100;
-    font-size: 1.2rem;
-    padding: 10px;
-    margin: 0;
+    position:sticky;
+    top:0;
+    z-index:999;
+    max-height:50px;
 }
 
 header nav {
-    margin:0px 50px;
+    margin:0px 10px;
+    max-height: 50px;
 }
 
-header nav ul li {
-    font-weight: 100;
-    color: #fff;
-}
-
-header nav ul li a {
+header nav ul li a  {
+    font-weight: 300;
     color:#fff;
+    font-size:0.8rem;
+}
+header nav ul li a:after {
+    content: "";
+    display: block;
+    height: 10px;
+    transition: width .3s;
 }
 header nav ul li a:hover {
     color:#999;
 }
+
 
 main {
     padding: 20px;

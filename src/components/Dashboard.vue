@@ -72,20 +72,13 @@ export default {
 
     <h1>Hi <a :href="`https://www.torn.com/profiles.php?XID=${user.id}`" target="_blank">{{ user.name }} [{{ user.id }}]</a>!</h1>
 
-    <p>
-        Welcome to Torn Portal.<br>
-        In the future, this site will offer a wide array of useful tools for you to enrich your Torn City career.<br>
-        <small>Inspired by many other tools such as TornTools, TornStats, YATA, torn.report ++</small>
-    </p>
-
     <h2>Tools</h2>
     <div class="grid">
-        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary">Dashboard</a>
         <a href="#" @click="this.$emit('setRouter', 'money')" role="button" class="secondary">Money</a>
         <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
         <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
         <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
-        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true"></a>
+        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
     </div>
 
     <h2>Your Torn profile</h2>
