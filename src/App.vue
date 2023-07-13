@@ -167,4 +167,10 @@ h2 {
 .danger {
     color:indianred;
 }
+
+:root {
+    --primary: #1e88e5 !important;
+    --primary-focus: rgba(0,0,0,0) !important;
+    --primary-hover: #4e9ce0 !important;
+}
 </style>
