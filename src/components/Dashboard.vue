@@ -13,6 +13,9 @@ export default {
             profile: null
         }
     },
+    emits: [
+        "setRouter"
+    ],
     methods: {
         async fetchProfile() {
 

@@ -1,6 +1,9 @@
 <script>
 export default {
     name: 'Login',
+    emits: [
+        "setUser"
+    ],
     methods: {
         async verifyKey(e) {
             e.preventDefault();
@@ -10,36 +13,31 @@ export default {
 
             let inputApiKey = document.getElementById('inputApiKey').value;
 
-            setTimeout(async () => {
+            try {
+                const response = await fetch(`https://api.torn.com/user/?selections=basic&key=${inputApiKey}`);
+                const userData = await response.json();
 
-                try {
-                    const response = await fetch(`https://api.torn.com/user/?selections=basic&key=${inputApiKey}`);
-                    const userData = await response.json();
-
-                    if(!response.ok) {
-                        if (userData.hasOwnProperty('error')) {
-                            throw `API Error: ${$data.error.error}`;
-                        }
-                        throw `API Error: Unknown`;
+                if(!response.ok) {
+                    if (userData.hasOwnProperty('error')) {
+                        throw `API Error: ${$data.error.error}`;
                     }
-
-                    const user = {id: userData.player_id, name: userData.name, apiKey: inputApiKey};
-                    this.$emit('setUser', user);
-
-                    btnSubmitApiKey.setAttribute('aria-busy', 'false');
-                } catch (e) {
-
-                    console.error(`Authentication error: ${e}`);
-                    this.$notify({
-                        title: "Authentication error",
-                        text: `${e}`,
-                        type: "error"
-                    });
-                    btnSubmitApiKey.setAttribute('aria-busy', 'false');
+                    throw `API Error: Unknown`;
                 }
 
-            }, 250);
+                const user = {id: userData.player_id, name: userData.name, apiKey: inputApiKey};
+                this.$emit('setUser', user);
 
+                btnSubmitApiKey.setAttribute('aria-busy', 'false');
+            } catch (e) {
+
+                console.error(`Authentication error: ${e}`);
+                this.$notify({
+                    title: "Authentication error",
+                    text: `${e}`,
+                    type: "error"
+                });
+                btnSubmitApiKey.setAttribute('aria-busy', 'false');
+            }
 
         }
     }
@@ -83,7 +81,7 @@ export default {
         </details>
         <details>
             <summary>Are you exploiting my API key to mug me?</summary>
-            <p><strike>No, but thanks for the idea :D</strike><br><br>
+            <p><span class="strikethrough">No, but thanks for the idea :D</span><br><br>
                 The API keys are never sent anywhere. You can open the browser inspector (F12) and see for yourself that no outgoing requests are sent when logging in (except the api.torn.com request ofcourse)</p>
         </details>
         <details>
@@ -102,5 +100,8 @@ article {
 }
 details p {
     font-size:0.8rem;
+}
+.strikethrough {
+    text-decoration: line-through;
 }
 </style>
