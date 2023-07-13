@@ -167,6 +167,9 @@ h2 {
 .danger {
     color:indianred;
 }
+.centered {
+    text-align:center;
+}
 
 :root {
     --primary: #1e88e5 !important;
