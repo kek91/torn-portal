@@ -62,7 +62,7 @@ export default {
             </ul>
             <ul v-if="user != null">
                 <li><a href="#dashboard" @click="setRouter('dashboard')">Dashboard</a></li>
-                <li role="list"><a href="#" aria-haspopup="dropdownTools">Tools</a>
+                <li role="list" data-theme="dark"><a href="#" aria-haspopup="dropdownTools">Tools</a>
                     <ul role="dropdownTools">
                         <li><a href="#money" @click="setRouter('money')">Money</a></li>
                         <li><a href="#" disabled="true">TBA</a></li>
@@ -126,14 +126,8 @@ header nav {
 header nav ul li a  {
     font-weight: 300;
     color:#fff;
-    font-size:0.8rem;
 }
-header nav ul li a:after {
-    content: "";
-    display: block;
-    height: 10px;
-    transition: width .3s;
-}
+
 header nav ul li a:hover {
     color:#999;
 }
