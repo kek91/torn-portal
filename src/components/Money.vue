@@ -17,9 +17,11 @@ export default {
         async fetchLog() {
 
             let btnFetchLog = document.getElementById('btnFetchLog');
+            let sectionMoney = document.getElementById('sectionMoney');
 
             try {
                 btnFetchLog.setAttribute('aria-busy', 'true');
+                sectionMoney.setAttribute('aria-busy', 'true');
 
                 const date = new Date();
                 const from = Math.round(date.setMonth(date.getMonth()-1) / 1000);
@@ -42,6 +44,7 @@ export default {
                 }
 
                 btnFetchLog.setAttribute('aria-busy', 'false');
+                sectionMoney.setAttribute('aria-busy', 'false');
                 return logs;
 
             } catch (e) {
@@ -52,6 +55,7 @@ export default {
                     type: "error"
                 });
                 btnFetchLog.setAttribute('aria-busy', 'false');
+                sectionMoney.setAttribute('aria-busy', 'false');
             }
             return null;
         },
