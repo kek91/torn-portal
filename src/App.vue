@@ -38,6 +38,7 @@ export default {
                 this.user = null;
                 localStorage.removeItem('user');
                 localStorage.removeItem('profile');
+                localStorage.removeItem('log');
             }
         }
     },
