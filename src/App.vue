@@ -60,10 +60,7 @@ export default {
             <ul>
                 <li><a href="#dashboard" @click="setRouter('dashboard')"><b>Torn Portal</b> <small>v{{ appVersion }}</small></a></li>
             </ul>
-            <ul v-if="user == null">
-                <li><a href="#login" @click="setRouter('login')">Login</a></li>
-            </ul>
-            <ul v-else>
+            <ul v-if="user != null">
                 <li><a href="#dashboard" @click="setRouter('dashboard')">Dashboard</a></li>
                 <li role="list"><a href="#" aria-haspopup="dropdownTools">Tools</a>
                     <ul role="dropdownTools">
