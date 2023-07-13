@@ -33,12 +33,13 @@ export default {
                     const response = await fetch(`https://api.torn.com/user/?selections=log&cat=13&from=${from}&to=${(to+(i*(3600*24)))}&comment=tornportal&key=${this.user.apiKey}`);
                     const data = await response.json();
 
-                    if (!response.ok) {
+                    if(!response.ok || data.hasOwnProperty('error')) {
                         if (data.hasOwnProperty('error')) {
-                            throw `API Error: ${$data.error.error}`;
+                            throw `API Error: ${data.error.error}`;
                         }
                         throw `API Error: Unknown`;
                     }
+
 
                     logs = {...logs, ...data.log};
                 }

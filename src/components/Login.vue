@@ -15,16 +15,16 @@ export default {
 
             try {
                 const response = await fetch(`https://api.torn.com/user/?selections=basic&key=${inputApiKey}`);
-                const userData = await response.json();
+                const data = await response.json();
 
-                if(!response.ok) {
-                    if (userData.hasOwnProperty('error')) {
-                        throw `API Error: ${$data.error.error}`;
+                if(!response.ok || data.hasOwnProperty('error')) {
+                    if (data.hasOwnProperty('error')) {
+                        throw `API Error: ${data.error.error}`;
                     }
                     throw `API Error: Unknown`;
                 }
 
-                const user = {id: userData.player_id, name: userData.name, apiKey: inputApiKey};
+                const user = {id: data.player_id, name: data.name, apiKey: inputApiKey};
                 this.$emit('setUser', user);
 
                 btnSubmitApiKey.setAttribute('aria-busy', 'false');
