@@ -18,7 +18,7 @@ export default {
 
 <template>
 
-    <h1>About</h1>
+    <h1><font-awesome-icon icon="fa-solid fa-circle-info" /> About</h1>
     <p>
         Torn Portal aims to offer a wide array of useful tools for you to enrich your Torn City career.<br>
         Made by <a href="https://www.torn.com/profiles.php?XID=2596327" target="_blank">Kvassh [2596327]</a>.
@@ -38,10 +38,10 @@ export default {
     <h2>Changelog</h2>
     <ul>
         <li><b>0.2.x</b><br>
-            - Adapted error handler for authentication because Torn API returns 200 for incorrect API key instead of 401 Unauthorized which would be more fitting<br>
-            - Fix potential null point exception when fetching money logs<br>
-            - Money log can fetch logs for Today, Last 7 days or Last 30 days<br>
             - Implemented the Money feature<br>
+            - Implemented the Casino Watcher feature<br>
+            - Adapted error handler for authentication because Torn API returns 200 for incorrect API key instead of 401 Unauthorized which would be more fitting<br>
+            - Fix potential null point exception when fetching data<br>
             - Misc layout adjustments<br>
             - Add temporary favicon
         </li>

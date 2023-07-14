@@ -3,6 +3,7 @@ import Login from "@/components/Login.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import Money from "@/components/Money.vue";
 import About from "@/components/About.vue";
+import CasinoWatcher from "@/components/CasinoWatcher.vue";
 import {useNotification} from "@kyvg/vue3-notification";
 import {version} from '../package.json'
 
@@ -14,13 +15,16 @@ export default {
         Login,
         Dashboard,
         Money,
-        About
+        About,
+        CasinoWatcher
     },
     data() {
         return {
             user: null,
             appVersion: version,
-            router: 'dashboard'
+            router: 'dashboard',
+            casinoWatcher: null,
+            casinoWatcherData: null
         }
     },
     methods: {
@@ -31,6 +35,21 @@ export default {
         },
         setRouter(page) {
             this.router = page;
+        },
+        setCasinoWatcher(intervalid) {
+            this.casinoWatcher = intervalid;
+        },
+        setCasinoWatcherData(data) {
+            this.casinoWatcherData = data;
+        },
+        clearCasinoWatcher() {
+            this.casinoWatcher = null;
+        },
+        clearCasinoWatcherData() {
+            this.casinoWatcherData = null;
+        },
+        updateCasinoWatcher(users) {
+            this.casinoWatcherData.users = users;
         },
         logout() {
             let confirmation = confirm("Are you sure you wish to log out?");
@@ -63,10 +82,10 @@ export default {
             </ul>
             <ul v-if="user != null">
                 <li><a href="#dashboard" @click="setRouter('dashboard')">Dashboard</a></li>
-                <li role="list" data-theme="dark"><a href="#" aria-haspopup="dropdownTools">Tools</a>
+                <li role="list" data-theme="dark"><a href="#" aria-haspopup="dropdownTools">Tools <span class="danger" v-if="casinoWatcher != null">*</span></a>
                     <ul role="dropdownTools">
-                        <li><a href="#money" @click="setRouter('money')">Money</a></li>
-                        <li><a href="#" disabled="true">TBA</a></li>
+                        <li><a href="#money" @click="setRouter('money')"><font-awesome-icon icon="fa-solid fa-money-bill" /> Money Log</a></li>
+                        <li><a href="#casinowatcher" @click="setRouter('casinowatcher')"><font-awesome-icon icon="fa-brands fa-watchman-monitoring" /> Casino Watcher<span class="danger" v-if="casinoWatcher != null">*</span></a></li>
                         <li><a href="#" disabled="true">TBA</a></li>
                         <li><a href="#" disabled="true">TBA</a></li>
                         <li><a href="#" disabled="true">TBA</a></li>
@@ -87,6 +106,7 @@ export default {
             <Dashboard
                     v-if="router === 'dashboard'"
                     :user="user"
+                    :casinoWatcher="casinoWatcher"
                     @setRouter="setRouter"
             ></Dashboard>
             <Money
@@ -95,8 +115,18 @@ export default {
             ></Money>
             <About
                     v-else-if="router === 'about'"
-                    :user="user"
             ></About>
+            <CasinoWatcher
+                    v-else-if="router === 'casinowatcher'"
+                    :user="user"
+                    :casinoWatcher="casinoWatcher"
+                    :casinoWatcherData="casinoWatcherData"
+                    @setCasinoWatcher="setCasinoWatcher"
+                    @setCasinoWatcherData="setCasinoWatcherData"
+                    @clearCasinoWatcher="clearCasinoWatcher"
+                    @clearCasinoWatcherData="clearCasinoWatcherData"
+                    @updateCasinoWatcher="updateCasinoWatcher"
+            ></CasinoWatcher>
         </div>
 
     </main>
@@ -159,7 +189,12 @@ h1 {
 
 h2 {
     font-weight:400;
-    margin: 50px 0px 10px 0px;
+    margin: 5px 0px;
+}
+h3 {
+    font-weight:400;
+    margin: 2px 0px;
+    padding:0px;
 }
 
 .success {
@@ -167,6 +202,9 @@ h2 {
 }
 .danger {
     color:indianred;
+}
+.warning {
+    color:darkorange;
 }
 .centered {
     text-align:center;

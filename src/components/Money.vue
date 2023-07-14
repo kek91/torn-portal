@@ -203,7 +203,8 @@ export default {
 
 <template>
 
-    <h1>Money</h1>
+    <h1><font-awesome-icon icon="fa-solid fa-money-bill" /> Money Log</h1>
+
 
     <article id="sectionMoney" v-if="log != null">
         <table>
