@@ -18,7 +18,7 @@ export default {
 
 <template>
 
-    <h1><font-awesome-icon icon="fa-solid fa-circle-info" /> About</h1>
+    <h1><i class="fa-solid fa-circle-info"></i> About</h1>
     <p>
         Torn Portal aims to offer a wide array of useful tools for you to enrich your Torn City career.<br>
         Made by <a href="https://www.torn.com/profiles.php?XID=2596327" target="_blank">Kvassh [2596327]</a>.
@@ -37,7 +37,13 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
-        <li><b>0.2.x</b><br>
+        <li><b>0.2.5</b><br>
+        - Implemented "Job Points" feature<br>
+        - Renamed "Money Log" to "Transactions"<br>
+        - Added secondary navigation for all the tools<br>
+        - [WIP] Began working on "Hospital Targets" feature...<br>
+        </li>
+        <li><b>0.2.4</b><br>
             - Implemented the Money feature<br>
             - Implemented the Casino Watcher feature<br>
             - Adapted error handler for authentication because Torn API returns 200 for incorrect API key instead of 401 Unauthorized which would be more fitting<br>

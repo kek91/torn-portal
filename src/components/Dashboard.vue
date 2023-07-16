@@ -80,20 +80,21 @@ export default {
 
 <template>
 
-    <h1><font-awesome-icon icon="fa-solid fa-house" /> Dashboard</h1>
+    <h1><i class="fa-solid fa-house"></i> Dashboard</h1>
 
-    <div class="grid">
-        <a href="#" @click="this.$emit('setRouter', 'money')" role="button" class="secondary">
-            Money Log
-        </a>
-        <a href="#" @click="this.$emit('setRouter', 'casinowatcher')" role="button" class="secondary">
-            Casino Watcher
-            <span class="danger" v-if="casinoWatcher != null">*</span>
-        </a>
-        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
-        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
-        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>
-    </div>
+<!--    <div class="grid">-->
+<!--        <a href="#money" @click="this.$emit('setRouter', 'money')" role="button" class="secondary">-->
+<!--            Transactions<br>-->
+<!--            <i class="fa-solid fa-money-bill fa-2xl"></i>-->
+<!--        </a>-->
+<!--        <a href="#casinowatcher" @click="this.$emit('setRouter', 'casinowatcher')" role="button" class="secondary">-->
+<!--            Casino Watcher-->
+<!--            <span class="danger" v-if="casinoWatcher != null">*</span>-->
+<!--        </a>-->
+<!--        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>-->
+<!--        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>-->
+<!--        <a href="#" @click="this.$emit('setRouter', 'dashboard')" role="button" class="secondary" disabled="true" aria-disabled="true">TBA</a>-->
+<!--    </div>-->
 
     <article id="sectionDashboard" v-if="profile != null">
         <table>

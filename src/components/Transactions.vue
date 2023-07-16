@@ -1,7 +1,7 @@
 <script>
 
 export default {
-    name: 'Money',
+    name: 'Transactions',
     props: {
         user: {
             type: Object,
@@ -203,7 +203,7 @@ export default {
 
 <template>
 
-    <h1><font-awesome-icon icon="fa-solid fa-money-bill" /> Money Log</h1>
+    <h1><i class="fa-solid fa-money-bill"></i> Transactions</h1>
 
 
     <article id="sectionMoney" v-if="log != null">
@@ -264,6 +264,6 @@ export default {
     text-align: right;
 }
 hr {
-    border:1px solid #333;
+    border-top:1px solid #333;
 }
 </style>

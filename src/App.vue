@@ -1,9 +1,12 @@
 <script>
 import Login from "@/components/Login.vue";
 import Dashboard from "@/components/Dashboard.vue";
-import Money from "@/components/Money.vue";
+import Transactions from "@/components/Transactions.vue";
 import About from "@/components/About.vue";
 import CasinoWatcher from "@/components/CasinoWatcher.vue";
+import Error404 from "@/components/Error404.vue";
+import JobPoints from "@/components/JobPoints.vue";
+import HospitalTargets from "@/components/HospitalTargets.vue";
 import {useNotification} from "@kyvg/vue3-notification";
 import {version} from '../package.json'
 
@@ -14,9 +17,12 @@ export default {
     components: {
         Login,
         Dashboard,
-        Money,
+        Transactions,
         About,
-        CasinoWatcher
+        CasinoWatcher,
+        Error404,
+        JobPoints,
+        HospitalTargets,
     },
     data() {
         return {
@@ -32,8 +38,10 @@ export default {
             console.log(`Saving userdata to localStorage (${JSON.stringify(user)})`);
             this.user = user;
             localStorage.setItem('user', JSON.stringify(user));
+            this.setRouter('dashboard');
         },
         setRouter(page) {
+            console.log('this.router = ' + page);
             this.router = page;
         },
         setCasinoWatcher(intervalid) {
@@ -58,6 +66,7 @@ export default {
                 localStorage.removeItem('user');
                 localStorage.removeItem('profile');
                 localStorage.removeItem('log');
+                localStorage.removeItem('jobPoints');
             }
         }
     },
@@ -69,6 +78,11 @@ export default {
             console.log(`Loaded data from cache. Welcome back ${this.user.name} :)`);
         }
 
+        // use router if url entered manually
+        if (window.location.hash) {
+            this.setRouter(window.location.hash.replace('#', ''));
+        }
+
         // this.user = null;
     }
 }
@@ -76,23 +90,46 @@ export default {
 
 <template>
     <header>
-        <nav>
+
+        <nav id="primaryNav">
             <ul>
-                <li><a href="#dashboard" @click="setRouter('dashboard')"><b>Torn Portal</b></a> <a href="#about" @click="setRouter('about')"><small>v{{ appVersion }}</small></a></li>
+                <li><a href="#dashboard" @click="setRouter('dashboard')"><b>Torn&nbsp;Portal</b></a></li>
+                <li><a href="#about" @click="setRouter('about')"><small>v{{ appVersion }}</small></a></li>
             </ul>
             <ul v-if="user != null">
                 <li><a href="#dashboard" @click="setRouter('dashboard')">Dashboard</a></li>
-                <li role="list" data-theme="dark"><a href="#" aria-haspopup="dropdownTools">Tools <span class="danger" v-if="casinoWatcher != null">*</span></a>
-                    <ul role="dropdownTools">
-                        <li><a href="#money" @click="setRouter('money')"><font-awesome-icon icon="fa-solid fa-money-bill" /> Money Log</a></li>
-                        <li><a href="#casinowatcher" @click="setRouter('casinowatcher')"><font-awesome-icon icon="fa-brands fa-watchman-monitoring" /> Casino Watcher<span class="danger" v-if="casinoWatcher != null">*</span></a></li>
-                        <li><a href="#" disabled="true">TBA</a></li>
-                        <li><a href="#" disabled="true">TBA</a></li>
-                        <li><a href="#" disabled="true">TBA</a></li>
-                    </ul>
-                </li>
                 <li><a href="#about" @click="setRouter('about')">About</a></li>
                 <li><a href="#logout" @click="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <nav id="secondaryNav" v-if="user != null">
+            <ul>
+                <li data-tooltip="Dashboard" data-placement="right">
+                    <a href="#dashboard" @click="setRouter('dashboard')">
+                        <i class="fa-solid fa-house"></i>
+                    </a>
+                </li>
+                <li data-tooltip="Transactions" data-placement="right">
+                    <a href="#transactions" @click="setRouter('transactions')">
+                        <i class="fa-solid fa-money-bill"></i>
+                    </a>
+                </li>
+                <li data-tooltip="Job Points" data-placement="right">
+                    <a href="#jobpoints" @click="setRouter('jobpoints')">
+                        <i class="fa-solid fa-suitcase"></i>
+                    </a>
+                </li>
+                <li :data-tooltip="casinoWatcher != null ? 'Casino Watcher (ACTIVE)' : 'Casino Watcher'" data-placement="right">
+                    <a href="#casinowatcher" @click="setRouter('casinowatcher')">
+                        <i class="fa-brands fa-watchman-monitoring" :class="casinoWatcher != null ? 'danger' : ''"></i>
+                    </a>
+                </li>
+                <li data-tooltip="Hospital Targets" data-placement="right">
+                    <a href="#hospitaltargets" @click="setRouter('hospitaltargets')">
+                        <i class="fa-solid fa-bed-pulse"></i>
+                    </a>
+                </li>
             </ul>
         </nav>
 
@@ -109,10 +146,10 @@ export default {
                     :casinoWatcher="casinoWatcher"
                     @setRouter="setRouter"
             ></Dashboard>
-            <Money
-                    v-else-if="router === 'money'"
+            <Transactions
+                    v-else-if="router === 'transactions'"
                     :user="user"
-            ></Money>
+            ></Transactions>
             <About
                     v-else-if="router === 'about'"
             ></About>
@@ -127,6 +164,15 @@ export default {
                     @clearCasinoWatcherData="clearCasinoWatcherData"
                     @updateCasinoWatcher="updateCasinoWatcher"
             ></CasinoWatcher>
+            <JobPoints
+                    v-else-if="router === 'jobpoints'"
+                    :user="user"
+            ></JobPoints>
+            <HospitalTargets
+                    v-else-if="router === 'hospitaltargets'"
+                    :user="user"
+            ></HospitalTargets>
+            <Error404 v-else></Error404>
         </div>
 
     </main>
@@ -143,24 +189,39 @@ export default {
 
 header {
     background: #333;
-    position:sticky;
-    top:0;
-    z-index:999;
-    max-height:50px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    max-height: 100px;
 }
 
-header nav {
-    margin:0px 10px;
-    max-height: 50px;
+header nav#primaryNav {
+    margin: 0px 10px;
+    height: 30px;
+    /*margin-bottom:15px;*/
 }
 
-header nav ul li a  {
+header nav#secondaryNav {
+    margin: 0px 10px;
+    padding-top: 5px;
+    height: 35px;
+    border-top: 1px solid #1b588c;
+}
+
+header nav ul li a {
     font-weight: 300;
-    color:#fff;
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+header nav#secondaryNav ul li a {
+    font-size: 1rem;
+    /*border:1px solid red;*/
+    /*padding:0;*/
 }
 
 header nav ul li a:hover {
-    color:#999;
+    color: #999;
 }
 
 
@@ -188,31 +249,44 @@ h1 {
 }
 
 h2 {
-    font-weight:400;
+    font-weight: 400;
     margin: 5px 0px;
 }
+
 h3 {
-    font-weight:400;
+    font-weight: 400;
     margin: 2px 0px;
-    padding:0px;
+    padding: 0px;
 }
 
 .success {
-    color:green;
+    color: green;
 }
+
 .danger {
-    color:indianred;
+    color: indianred;
 }
+
 .warning {
-    color:darkorange;
+    color: darkorange;
 }
+
 .centered {
-    text-align:center;
+    text-align: center;
 }
 
 :root {
     --primary: #1e88e5 !important;
-    --primary-focus: rgba(0,0,0,0) !important;
+    --primary-focus: rgba(0, 0, 0, 0) !important;
     --primary-hover: #4e9ce0 !important;
 }
+
+hr.blue {
+    border: 1px solid #1e88e5;
+}
+
+[data-tooltip]:not(a,button,input) {
+    border: 0;
+}
+
 </style>

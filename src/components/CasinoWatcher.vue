@@ -1,12 +1,10 @@
 <script>
 import Vue3TagsInput from 'vue3-tags-input';
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 export default {
     name: 'CasinoWatcher',
     components: {
         Vue3TagsInput,
-        FontAwesomeIcon
     },
     props: {
         user: {
@@ -132,7 +130,7 @@ export default {
 
 <template>
 
-    <h1><font-awesome-icon icon="fa-brands fa-watchman-monitoring" /> Casino Watcher</h1>
+    <h1><i class="fa-brands fa-watchman-monitoring"></i> Casino Watcher</h1>
 
     <article id="sectionCasinoWatcherActive" v-if="casinoWatcher">
         <h2 class="success centered">Surveillance is active!</h2>
@@ -149,7 +147,7 @@ export default {
                     <td>{{ user.refilled ? 'Yes, attack!' : 'Nope, keep waiting...' }}</td>
                     <td>
                         <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + user.id" target="blank">
-                            <font-awesome-icon icon="gun" size="2xl" :beat="user.refilled ? true : false" :class="user.refilled ? 'danger' : ''" />
+                            <i class="fa-solid fa-gun fa-2xl" :class="user.refilled ? 'danger fa-beat' : ''"></i>
                         </a>
                     </td>
                 </tr>
