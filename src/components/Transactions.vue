@@ -207,45 +207,47 @@ export default {
 
 
     <article id="sectionMoney" v-if="log != null">
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Title</th>
-                <th>Value</th>
-            </tr>
-            <tr v-for="entry in log.log" :key="entry.timestamp">
-                <td>{{ new Date(entry.timestamp * 1000).toUTCString() }}</td>
-                <td>{{ entry.category }}</td>
-                <td>{{ entry.title }}</td>
-                <td :class="entry.money === 'incoming' ? 'totals success' : 'totals danger'">{{ entry.value }}</td>
-            </tr>
+        <figure>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Title</th>
+                    <th>Value</th>
+                </tr>
+                <tr v-for="entry in log.log" :key="entry.timestamp">
+                    <td>{{ new Date(entry.timestamp * 1000).toUTCString() }}</td>
+                    <td>{{ entry.category }}</td>
+                    <td>{{ entry.title }}</td>
+                    <td :class="entry.money === 'incoming' ? 'totals success' : 'totals danger'">{{ entry.value }}</td>
+                </tr>
 
-            <tr><td colspan="5"><hr></td></tr>
+                <tr><td colspan="5"><hr></td></tr>
 
-            <tr>
-                <td colspan="3">Total incoming</td>
-                <td class="totals success">{{ log.totalIncomingFormatted }}</td>
-            </tr>
-            <tr>
-                <td colspan="3">Total outgoing</td>
-                <td class="totals danger">{{ log.totalOutgoingFormatted }}</td>
-            </tr>
-            <tr>
-                <td colspan="3">Balance</td>
-                <td :class="log.balance > 0 ? 'totals success' : 'totals danger'">{{ log.balanceFormatted }}</td>
-            </tr>
+                <tr>
+                    <td colspan="3">Total incoming</td>
+                    <td class="totals success">{{ log.totalIncomingFormatted }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3">Total outgoing</td>
+                    <td class="totals danger">{{ log.totalOutgoingFormatted }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3">Balance</td>
+                    <td :class="log.balance > 0 ? 'totals success' : 'totals danger'">{{ log.balanceFormatted }}</td>
+                </tr>
 
-            <tr><td colspan="5"><hr></td></tr>
+                <tr><td colspan="5"><hr></td></tr>
 
-            <tr>
-                <td>Transactions</td>
-                <td class="centered success">Incoming<br>{{ log.transactionsIn }}</td>
-                <td class="centered danger">Outgoing<br>{{ log.transactionsOut }}</td>
-                <td class="centered">Total<br>{{ log.transactionsIn + log.transactionsOut }}</td>
-            </tr>
+                <tr>
+                    <td>Transactions</td>
+                    <td class="centered success">Incoming<br>{{ log.transactionsIn }}</td>
+                    <td class="centered danger">Outgoing<br>{{ log.transactionsOut }}</td>
+                    <td class="centered">Total<br>{{ log.transactionsIn + log.transactionsOut }}</td>
+                </tr>
 
-        </table>
+            </table>
+        </figure>
     </article>
 
     <article id="sectionMoney" v-else>
