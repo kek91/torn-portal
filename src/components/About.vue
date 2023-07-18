@@ -3,6 +3,10 @@
 export default {
     name: 'About',
     props: {
+        appVersion: {
+            type: String,
+            required: true
+        }
     },
     data() {
         return {
@@ -18,7 +22,7 @@ export default {
 
 <template>
 
-    <h1><i class="fa-solid fa-circle-info"></i> About</h1>
+    <h1><i class="fa-solid fa-circle-info"></i> Torn Portal v{{ appVersion }}</h1>
     <p>
         Torn Portal aims to offer a wide array of useful tools for you to enrich your Torn City career.<br>
         Made by <a href="https://www.torn.com/profiles.php?XID=2596327" target="_blank">Kvassh [2596327]</a>.
@@ -37,6 +41,11 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
+        <li><b>0.2.6</b><br>
+            - [WIP] Began working on "Job Finder" feature...<br>
+            - Transactions table is responsive and shows horizontal scroller if necessary<br>
+            - Minor UI adjustment navigation<br>
+        </li>
         <li><b>0.2.5</b><br>
         - Implemented "Job Points" feature<br>
         - Renamed "Money Log" to "Transactions"<br>
