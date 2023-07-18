@@ -6,6 +6,7 @@ import About from "@/components/About.vue";
 import CasinoWatcher from "@/components/CasinoWatcher.vue";
 import Error404 from "@/components/Error404.vue";
 import JobPoints from "@/components/JobPoints.vue";
+import JobFinder from "@/components/JobFinder.vue";
 import HospitalTargets from "@/components/HospitalTargets.vue";
 import {useNotification} from "@kyvg/vue3-notification";
 import {version} from '../package.json'
@@ -22,6 +23,7 @@ export default {
         CasinoWatcher,
         Error404,
         JobPoints,
+        JobFinder,
         HospitalTargets,
     },
     data() {
@@ -94,7 +96,6 @@ export default {
         <nav id="primaryNav">
             <ul>
                 <li><a href="#dashboard" @click="setRouter('dashboard')"><b>Torn&nbsp;Portal</b></a></li>
-                <li><a href="#about" @click="setRouter('about')"><small>v{{ appVersion }}</small></a></li>
             </ul>
             <ul v-if="user != null">
                 <li><a href="#dashboard" @click="setRouter('dashboard')">Dashboard</a></li>
@@ -105,27 +106,32 @@ export default {
 
         <nav id="secondaryNav" v-if="user != null">
             <ul>
-                <li data-tooltip="Dashboard" data-placement="right">
+                <li data-tooltip="Dashboard" data-placement="bottom">
                     <a href="#dashboard" @click="setRouter('dashboard')">
                         <i class="fa-solid fa-house"></i>
                     </a>
                 </li>
-                <li data-tooltip="Transactions" data-placement="right">
+                <li data-tooltip="Transactions" data-placement="bottom">
                     <a href="#transactions" @click="setRouter('transactions')">
                         <i class="fa-solid fa-money-bill"></i>
                     </a>
                 </li>
-                <li data-tooltip="Job Points" data-placement="right">
+                <li data-tooltip="Job Points" data-placement="bottom">
                     <a href="#jobpoints" @click="setRouter('jobpoints')">
                         <i class="fa-solid fa-suitcase"></i>
                     </a>
                 </li>
-                <li :data-tooltip="casinoWatcher != null ? 'Casino Watcher (ACTIVE)' : 'Casino Watcher'" data-placement="right">
+                <li data-tooltip="Job Finder" data-placement="bottom">
+                    <a href="#jobfinder" @click="setRouter('jobfinder')">
+                        <i class="fa-solid fa-magnifying-glass-dollar"></i>
+                    </a>
+                </li>
+                <li :data-tooltip="casinoWatcher != null ? 'Casino Watcher (ACTIVE)' : 'Casino Watcher'" data-placement="bottom">
                     <a href="#casinowatcher" @click="setRouter('casinowatcher')">
                         <i class="fa-brands fa-watchman-monitoring" :class="casinoWatcher != null ? 'danger' : ''"></i>
                     </a>
                 </li>
-                <li data-tooltip="Hospital Targets" data-placement="right">
+                <li data-tooltip="Hospital Targets" data-placement="bottom">
                     <a href="#hospitaltargets" @click="setRouter('hospitaltargets')">
                         <i class="fa-solid fa-bed-pulse"></i>
                     </a>
@@ -152,6 +158,7 @@ export default {
             ></Transactions>
             <About
                     v-else-if="router === 'about'"
+                    :app-version="appVersion"
             ></About>
             <CasinoWatcher
                     v-else-if="router === 'casinowatcher'"
@@ -168,6 +175,10 @@ export default {
                     v-else-if="router === 'jobpoints'"
                     :user="user"
             ></JobPoints>
+            <JobFinder
+                    v-else-if="router === 'jobfinder'"
+                    :user="user"
+            ></JobFinder>
             <HospitalTargets
                     v-else-if="router === 'hospitaltargets'"
                     :user="user"
