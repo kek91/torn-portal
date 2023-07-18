@@ -22,7 +22,7 @@ export default {
 
 <template>
 
-    <h1><i class="fa-solid fa-circle-info"></i> Torn Portal v{{ appVersion }}</h1>
+    <h1><i class="fa-solid fa-circle-info"></i> Torn Portal <small>v{{ appVersion }}</small></h1>
     <p>
         Torn Portal aims to offer a wide array of useful tools for you to enrich your Torn City career.<br>
         Made by <a href="https://www.torn.com/profiles.php?XID=2596327" target="_blank">Kvassh [2596327]</a>.
@@ -41,6 +41,10 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
+        <li><b>0.2.7</b><br>
+            - Minor UI adjustments<br>
+            - ...
+        </li>
         <li><b>0.2.6</b><br>
             - [WIP] Began working on "Job Finder" feature...<br>
             - Transactions table is responsive and shows horizontal scroller if necessary<br>

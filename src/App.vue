@@ -98,7 +98,6 @@ export default {
                 <li><a href="#dashboard" @click="setRouter('dashboard')"><b>Torn&nbsp;Portal</b></a></li>
             </ul>
             <ul v-if="user != null">
-                <li><a href="#dashboard" @click="setRouter('dashboard')">Dashboard</a></li>
                 <li><a href="#about" @click="setRouter('about')">About</a></li>
                 <li><a href="#logout" @click="logout">Logout</a></li>
             </ul>
