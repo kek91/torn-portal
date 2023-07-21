@@ -103,7 +103,8 @@ export default {
             <tr><td>Level</td><td>{{ profile.level }}</td></tr>
             <tr><td>Age</td><td>{{ profile.age }} ({{ ageInHumanOutput(profile.age) }})</td></tr>
             <tr><td>Levels gained pr day</td><td>{{ (parseInt(profile.level) / parseInt(profile.age)).toFixed(3) }}</td></tr>
-            <tr><td>Faction</td><td><a :href="`https://www.torn.com/factions.php?step=profile&ID=${profile.faction.faction_id}&referredFrom=${profile.player_id}`" target="_blank">[{{ profile.faction.faction_tag }}] {{ profile.faction.faction_name }}</a></td></tr>
+            <tr><td>Faction</td><td>{{ profile.faction.position }} of <a :href="`https://www.torn.com/factions.php?step=profile&ID=${profile.faction.faction_id}&referredFrom=${profile.player_id}`" target="_blank">[{{ profile.faction.faction_tag }}] {{ profile.faction.faction_name }}</a> for {{ profile.faction.days_in_faction }} days</td></tr>
+            <tr><td>Job</td><td>{{ profile.job.position }} of <a :href="`https://www.torn.com/joblist.php#/p=corpinfo&ID=${profile.job.company_id}&referredFrom=${profile.player_id}`" target="_blank">{{ profile.job.company_name }}</a></td></tr>
             <tr><td>Friends</td><td class="success">{{ profile.friends }}</td></tr>
             <tr><td>Enemies</td><td class="danger">{{ profile.enemies }}</td></tr>
         </table>
