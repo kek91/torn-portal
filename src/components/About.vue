@@ -42,8 +42,10 @@ export default {
     <h2>Changelog</h2>
     <ul>
         <li><b>0.2.7</b><br>
+            - Job Finder complete!<br>
             - Minor UI adjustments<br>
-            - ...
+            - Show days in faction + current job on Dashboard<br>
+            - [WIP] Made some progress on HospitalTargets<br>
         </li>
         <li><b>0.2.6</b><br>
             - [WIP] Began working on "Job Finder" feature...<br>
