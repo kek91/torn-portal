@@ -159,23 +159,6 @@ export default {
         </form>
     </article>
 
-    <article id="articleJobs" v-if="jobs">
-<!--        <table v-if="companies != null">-->
-<!--            <tr><td colspan="2" class="centered"><b>Private Companies</b><hr></td></tr>-->
-<!--            <tr v-for="item in companies.jobpoints.companies">-->
-<!--                <td>{{ item.name }}</td>-->
-<!--                <td class="centered">{{ item.jobpoints }}</td>-->
-<!--            </tr>-->
-<!--            <br>-->
-<!--            <tr><td colspan="2" class="centered"><b>Torn City Jobs</b><hr></td></tr>-->
-<!--            <tr v-for="(val, key) in companies.jobpoints.jobs">-->
-<!--                <td>{{ key.charAt(0).toUpperCase() + key.slice(1) }}</td>-->
-<!--                <td class="centered">{{ val }}</td>-->
-<!--            </tr>-->
-
-<!--        </table>-->
-    </article>
-
 
 </template>
 
