@@ -214,7 +214,7 @@ header nav#primaryNav {
 header nav#secondaryNav {
     margin: 0px 10px;
     padding-top: 5px;
-    height: 35px;
+    height: 45px;
     border-top: 1px solid #1b588c;
 }
 
@@ -225,7 +225,7 @@ header nav ul li a {
 }
 
 header nav#secondaryNav ul li a {
-    font-size: 1rem;
+    font-size: 1.2rem;
     /*border:1px solid red;*/
     /*padding:0;*/
 }
