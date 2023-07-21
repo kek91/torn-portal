@@ -268,4 +268,7 @@ export default {
 hr {
     border-top:1px solid #333;
 }
+a[role=button] {
+    margin-bottom:10px;
+}
 </style>
