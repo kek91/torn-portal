@@ -19,10 +19,10 @@ export default {
     methods: {
         async fetchCompanies() {
 
-            let articleJobs = document.getElementById('articleJobs');
+            let loader = document.getElementsByClassName('loader')[0];
 
             try {
-                articleJobs.setAttribute('aria-busy', 'true');
+                loader.setAttribute('aria-busy', 'true');
 
                 const response = await fetch(`https://api.torn.com/torn/?selections=companies&comment=tornportal&key=${this.user.apiKey}`);
                 const data = await response.json();
@@ -36,7 +36,7 @@ export default {
 
                 localStorage.setItem('companies', JSON.stringify(data.companies));
 
-                articleJobs.setAttribute('aria-busy', 'false');
+                loader.setAttribute('aria-busy', 'false');
                 return data.companies;
 
             } catch (e) {
@@ -46,7 +46,7 @@ export default {
                     text: `${e}`,
                     type: "error"
                 });
-                articleJobs.setAttribute('aria-busy', 'false');
+                loader.setAttribute('aria-busy', 'false');
             }
             return null;
         },
@@ -71,6 +71,7 @@ export default {
 <template>
 
     <h1><i class="fa-solid fa-magnifying-glass-dollar"></i> Job Finder</h1>
+    <div class="loader"></div>
 
     <article>
         <form @submit="findJobs">
