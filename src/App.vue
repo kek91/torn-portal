@@ -281,8 +281,14 @@ h3 {
     color: darkorange;
 }
 
-.centered {
+.centered, .center {
     text-align: center;
+}
+.left {
+    text-align:left;
+}
+.right {
+    text-align:right;
 }
 
 :root {
