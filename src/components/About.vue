@@ -41,6 +41,10 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
+        <li><b>0.2.8</b><br>
+            - Minor UI adjustments<br>
+            - WIP...<br>
+        </li>
         <li><b>0.2.7</b><br>
             - Job Finder complete!<br>
             - Minor UI adjustments<br>
