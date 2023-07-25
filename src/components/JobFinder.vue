@@ -34,7 +34,7 @@ export default {
                 const response = await fetch(url);
                 const data = await response.json();
 
-                if(!response.ok || data.hasOwnProperty('error')) {
+                if (!response.ok || data.hasOwnProperty('error')) {
                     if (data.hasOwnProperty('error')) {
                         throw `API Error: ${data.error.error}`;
                     }
@@ -75,12 +75,11 @@ export default {
                     // Now filter the data: Ignore those who are full or less rating than minimum
                     for (const k in data) {
                         if (
-                            (data[k].employees_capacity - data[k].employees_hired) > 0 &&
-                            (data[k].rating >= this.minRating)
+                                (data[k].employees_capacity - data[k].employees_hired) > 0 &&
+                                (data[k].rating >= this.minRating)
                         ) {
                             // Keep this one!
-                        }
-                        else {
+                        } else {
                             delete data[k];
                         }
                     }
@@ -121,19 +120,29 @@ export default {
             Sorry, couldn't find any available jobs.<br>
             Try another industry or consider lowering your minimum rating requirement.
         </p>
-        <table v-else>
-            <tr><th>Company name</th><th>Rating</th><th>Employees</th><th>Available spots</th><th>Age</th><th>Weekly income</th></tr>
-            <tr v-for="(data,id) in companiesByType" :key="id">
-                <td>
-                    <a :href="`https://www.torn.com/joblist.php#/p=corpinfo&ID=${data.ID}`" target="_blank">{{ data.name }}</a>
-                </td>
-                <td>{{ data.rating }} <i class="fa-solid fa-star fa-xs"></i></td>
-                <td>{{ data.employees_hired }}</td>
-                <td>{{ (data.employees_capacity - data.employees_hired) }}</td>
-                <td>{{ $filters.toNumberFormat(data.days_old) }}</td>
-                <td class="right">{{ $filters.toMoney(data.weekly_income) }}</td>
-            </tr>
-        </table>
+        <figure v-else>
+            <table>
+                <tr>
+                    <th>Company name</th>
+                    <th>Rating</th>
+                    <th>Employees</th>
+                    <th>Available spots</th>
+                    <th>Age</th>
+                    <th>Weekly income</th>
+                </tr>
+                <tr v-for="(data,id) in companiesByType" :key="id">
+                    <td>
+                        <a :href="`https://www.torn.com/joblist.php#/p=corpinfo&ID=${data.ID}`"
+                           target="_blank">{{ data.name }}</a>
+                    </td>
+                    <td>{{ data.rating }} <i class="fa-solid fa-star fa-xs"></i></td>
+                    <td>{{ data.employees_hired }}</td>
+                    <td>{{ (data.employees_capacity - data.employees_hired) }}</td>
+                    <td>{{ $filters.toNumberFormat(data.days_old) }}</td>
+                    <td class="right">{{ $filters.toMoney(data.weekly_income) }}</td>
+                </tr>
+            </table>
+        </figure>
     </article>
 
     <article>
@@ -143,7 +152,11 @@ export default {
             </select>
             <div v-if="companyId" v-for="(cp,id) in companies" :key="id">
                 <table v-if="id == companyId">
-                    <tr><th>Perk</th><th>Cost</th><th>Required</th></tr>
+                    <tr>
+                        <th>Perk</th>
+                        <th>Cost</th>
+                        <th>Required</th>
+                    </tr>
                     <tr v-for="special in cp.specials">
                         <td>{{ special.effect }}</td>
                         <td>{{ special.cost == 0 ? 'Passive' : special.cost + ' JP' }}</td>
@@ -164,6 +177,6 @@ export default {
 
 <style scoped>
 hr {
-    border-top:1px solid #333;
+    border-top: 1px solid #333;
 }
 </style>

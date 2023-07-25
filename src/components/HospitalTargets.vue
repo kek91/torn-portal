@@ -25,7 +25,7 @@ export default {
                 const response = await fetch(`https://api.torn.com/faction/${factionId}?comment=tornportal&key=${this.user.apiKey}`);
                 const data = await response.json();
 
-                if(!response.ok || data.hasOwnProperty('error')) {
+                if (!response.ok || data.hasOwnProperty('error')) {
                     if (data.hasOwnProperty('error')) {
                         throw `API Error: ${data.error.error}`;
                     }
@@ -71,26 +71,36 @@ export default {
     <div class="loader"></div>
 
     <article v-if="factionData != null">
-        <table>
-            <tr><th>Name</th><th>Level</th><th>Description</th><th>Time left</th><th>Attack</th></tr>
-            <tr v-for="(data,id) in factionData.members" :key="id">
-                <template v-if="data.status.state == 'Hospital'">
-                    <td>{{ data.name }}</td>
-                    <td>{{ data.level }}</td>
-                    <td>{{ data.status.description }}</td>
-                    <td>
-                        {{ data.status.until - Math.round(Date.now()/1000) > 60 ?
-                            Math.round((data.status.until - Math.round(Date.now()/1000))/60) + '&nbsp;m' :
-                            Math.round(data.status.until - Math.round(Date.now()/1000)) + '&nbsp;s' }}
-                    </td>
-                    <td>
-                        <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + id" target="blank">
-                            <i class="fa-solid fa-gun fa-2xl"></i>
-                        </a>
-                    </td>
-                </template>
-            </tr>
-        </table>
+        <figure>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Level</th>
+                    <th>Description</th>
+                    <th>Time left</th>
+                    <th>Attack</th>
+                </tr>
+                <tr v-for="(data,id) in factionData.members" :key="id">
+                    <template v-if="data.status.state == 'Hospital'">
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.level }}</td>
+                        <td>{{ data.status.description }}</td>
+                        <td>
+                            {{
+                                data.status.until - Math.round(Date.now() / 1000) > 60 ?
+                                        Math.round((data.status.until - Math.round(Date.now() / 1000)) / 60) + '&nbsp;m' :
+                                        Math.round(data.status.until - Math.round(Date.now() / 1000)) + '&nbsp;s'
+                            }}
+                        </td>
+                        <td>
+                            <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + id" target="blank">
+                                <i class="fa-solid fa-gun fa-2xl"></i>
+                            </a>
+                        </td>
+                    </template>
+                </tr>
+            </table>
+        </figure>
     </article>
 
     <article>

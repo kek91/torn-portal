@@ -67,20 +67,22 @@ export default {
     <h1><i class="fa-solid fa-suitcase"></i> Job Points</h1>
 
     <article id="articleJobPoints">
-        <table v-if="jobPoints != null">
-            <tr><td colspan="2" class="centered"><b>Private Companies</b><hr></td></tr>
-            <tr v-for="item in jobPoints.jobpoints.companies">
-                <td>{{ item.name }}</td>
-                <td class="centered">{{ item.jobpoints }}</td>
-            </tr>
-            <br>
-            <tr><td colspan="2" class="centered"><b>Torn City Jobs</b><hr></td></tr>
-            <tr v-for="(val, key) in jobPoints.jobpoints.jobs">
-                <td>{{ key.charAt(0).toUpperCase() + key.slice(1) }}</td>
-                <td class="centered">{{ val }}</td>
-            </tr>
+        <figure>
+            <table v-if="jobPoints != null">
+                <tr><td colspan="2" class="centered"><b>Private Companies</b><hr></td></tr>
+                <tr v-for="item in jobPoints.jobpoints.companies">
+                    <td>{{ item.name }}</td>
+                    <td class="centered">{{ item.jobpoints }}</td>
+                </tr>
+                <br>
+                <tr><td colspan="2" class="centered"><b>Torn City Jobs</b><hr></td></tr>
+                <tr v-for="(val, key) in jobPoints.jobpoints.jobs">
+                    <td>{{ key.charAt(0).toUpperCase() + key.slice(1) }}</td>
+                    <td class="centered">{{ val }}</td>
+                </tr>
 
-        </table>
+            </table>
+        </figure>
     </article>
 
     <a href="#" id="btnFetchJP" role="button" @click="fetchJobPoints()">Refresh</a>
