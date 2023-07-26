@@ -41,8 +41,8 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
-        <li><b>0.2.8</b><br>
-            - Minor UI adjustments<br>
+        <li><b>Beta</b><br>
+            - Fix responsive tables for several tools<br>
             - WIP...<br>
         </li>
         <li><b>0.2.7</b><br>
