@@ -131,7 +131,7 @@ export default {
                     </a>
                 </li>
                 <li data-tooltip="War" data-placement="bottom">
-                    <a href="#hospitaltargets" @click="setRouter('war')">
+                    <a href="#war" @click="setRouter('war')">
                         <i class="fa-solid fa-skull-crossbones"></i>
                     </a>
                 </li>
