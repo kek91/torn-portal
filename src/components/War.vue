@@ -1,7 +1,7 @@
 <script>
 
 export default {
-    name: 'HospitalTargets',
+    name: 'War',
     props: {
         user: {
             type: Object,
@@ -67,7 +67,7 @@ export default {
 
 <template>
 
-    <h1><i class="fa-solid fa-bed-pulse"></i> Hospital Targets<span id="currentFactionName"></span></h1>
+    <h1><i class="fa-solid fa-skull-crossbones"></i> War<span id="currentFactionName"></span></h1>
     <div class="loader"></div>
 
     <article v-if="factionData != null">
