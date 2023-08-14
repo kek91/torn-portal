@@ -51,6 +51,11 @@ export default {
                     type: "error"
                 });
                 btnFetchProfile.setAttribute('aria-busy', 'false');
+
+                // Try to use cached data if it exists
+                if (localStorage.getItem('profile') != null) {
+                    this.profile = JSON.parse(localStorage.getItem('profile'));
+                }
             }
         },
         ageInHumanOutput(age) {
@@ -67,13 +72,8 @@ export default {
 
     },
     mounted() {
-        // Use cached profile if it exists
-        if (localStorage.getItem('profile') != null) {
-            this.profile = JSON.parse(localStorage.getItem('profile'));
-        }
-        else {
-            this.fetchProfile();
-        }
+
+        this.fetchProfile();
     }
 }
 </script>

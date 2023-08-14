@@ -21,7 +21,7 @@ export default {
             try {
                 articleJobPoints.setAttribute('aria-busy', 'true');
 
-                const response = await fetch(`https://api.torn.com/user/?selections=jobpoints&comment=tornportal&key=${this.user.apiKey}`);
+                const response = await fetch(`httpsx://api.torn.com/user/?selections=jobpoints&comment=tornportal&key=${this.user.apiKey}`);
                 const data = await response.json();
 
                 if(!response.ok || data.hasOwnProperty('error')) {
@@ -44,20 +44,21 @@ export default {
                     type: "error"
                 });
                 articleJobPoints.setAttribute('aria-busy', 'false');
+
+                // Use cached data if it exists
+                if (localStorage.getItem('jobPoints')) {
+                    console.log("JobPoints: using cached data");
+                    return JSON.parse(localStorage.getItem('jobPoints'))
+                }
             }
             return null;
         }
     },
     mounted() {
-        if (localStorage.getItem('jobPoints')) {
-            console.log("JobPoints: using cached data");
-            this.jobPoints = JSON.parse(localStorage.getItem('jobPoints'))
-        } else {
-            console.log("JobPoints: fetching from API");
-            this.fetchJobPoints().then(data => {
-                this.jobPoints = data;
-            })
-        }
+
+        this.fetchJobPoints().then(data => {
+            this.jobPoints = data;
+        });
     }
 }
 </script>
