@@ -281,6 +281,10 @@ h3 {
     color: darkorange;
 }
 
+.info {
+    color:dodgerblue;
+}
+
 .centered, .center {
     text-align: center;
 }
