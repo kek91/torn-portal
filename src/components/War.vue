@@ -153,12 +153,14 @@ export default {
 
                 }
 
-                this.fetchFactionUsers(this.factionIdOpponent).then(data => {
-                    this.factionData = data;
-                    this.factionMembers = this.sortFactionMembersByHospTime(data.members);
-                    document.getElementById('currentFactionName').innerHTML = `<span class="success">${this.factionNameMine} (${this.rwScoreMine})</span> vs <span class="danger">${this.factionNameOpponent} (${this.rwScoreOpponent})</span>`;
-                    this.activateTimers();
-                });
+                if (this.factionIdOpponent !== null) {
+                    this.fetchFactionUsers(this.factionIdOpponent).then(data => {
+                        this.factionData = data;
+                        this.factionMembers = this.sortFactionMembersByHospTime(data.members);
+                        document.getElementById('currentFactionName').innerHTML = `<span class="success">${this.factionNameMine} (${this.rwScoreMine})</span> vs <span class="danger">${this.factionNameOpponent} (${this.rwScoreOpponent})</span>`;
+                        this.activateTimers();
+                    });
+                }
             }
         });
 
