@@ -41,6 +41,9 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
+        <li><b>Beta</b><br>
+            - Fix bug in attack icon link in War feature<br>
+        </li>
         <li><b>0.2.8</b><br>
             - Fix responsive tables for several tools<br>
             - Rename "Hospital Targets" to "War"<br>

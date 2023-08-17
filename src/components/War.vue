@@ -275,13 +275,13 @@ export default {
 
                     <td class="center">
                         <template v-if="data[1].status.state !== 'Okay'">
-                            <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + id" target="blank"
+                            <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data[0]" target="blank"
                                class="secondary">
                                 <i class="fa-solid fa-gun"></i>
                             </a>
                         </template>
                         <template v-else>
-                            <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + id" target="blank"
+                            <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data[0]" target="blank"
                                class="primary">
                                 <i class="fa-solid fa-gun"></i>
                             </a>
