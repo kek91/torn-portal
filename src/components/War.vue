@@ -19,6 +19,8 @@ export default {
             factionNameOpponent: null,
             rwScoreMine: null,
             rwScoreOpponent: null,
+            windowWidth: window.innerWidth,
+            intervalId: null
         }
     },
     methods: {
@@ -102,15 +104,33 @@ export default {
         },
 
         activateTimers() {
-            setInterval(() => {
-                console.log('Starting timers!');
+            this.intervalId = setInterval(() => {
                 let timers = document.getElementsByClassName('timer');
+                console.log(`Updating timers for ${timers.length} players`);
                 for (let i = 0; i < timers.length; i++) {
-                    let s = parseInt(timers[i].innerHTML);
-                    timers[i].innerHTML = s-1;
-                }
-            }, 1250);
 
+                    // let tsUntil = timers[i].getAttribute('data-until');
+                    let tsUntil = (Date.now()/1000);
+                    let tsNow = (Date.now()/1000);
+                    let sDiff = Math.round(tsUntil - tsNow);
+
+                    if (sDiff > 0) {
+                        timers[i].innerHTML = sDiff.toString();
+                    }
+                    else {
+                        timers[i].innerHTML = 'Out!';
+                        timers[i].parentElement.parentElement.style.backgroundColor = "rgba(10,250,10, 0.1)";
+
+                        console.log(timers[i].parentElement.nextSibling.childNodes[0]);
+
+                    }
+                }
+            }, 1000);
+        },
+
+        stopTimers() {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
         },
 
         showHospitalTargets(e) {
@@ -165,9 +185,11 @@ export default {
         });
 
         if (localStorage.getItem('hospitalTargetsFactionId')) {
-            console.log("HospitalTargets: using cached data");
             this.factionId = localStorage.getItem('hospitalTargetsFactionId');
         }
+
+        // Make sure we dont have any timers alrady running
+        this.stopTimers();
     }
 }
 </script>
@@ -186,7 +208,7 @@ export default {
                     <th> &nbsp; </th>
                     <th>Level</th>
                     <th>Description</th>
-                    <th>Time left</th>
+                    <th>Timer</th>
                     <th class="center">Attack</th>
                 </tr>
                 <!--<tr v-for="(data,id) in factionData.members" :key="id">-->
@@ -216,14 +238,21 @@ export default {
                         {{ data[1].level }}
                     </td>
 
-                    <td>
+                    <td v-if="this.windowWidth < 800">
+                        <span class="success" v-if="data[1].status.state === 'Okay'">Okay</span>
+                        <span class="info" v-else-if="data[1].status.state === 'Traveling' || data[1].status.state === 'Abroad'">Travel</span>
+                        <span class="secondary" v-else-if="data[1].status.state === 'Fallen'">Fallen</span>
+                        <span class="danger" v-else>Hospital</span>
+                    </td>
+                    <td v-else>
                         <span class="success" v-if="data[1].status.state === 'Okay'">{{ data[1].status.description }}</span>
                         <span class="info" v-else-if="data[1].status.state === 'Traveling' || data[1].status.state === 'Abroad'">{{ data[1].status.description }}</span>
+                        <span class="secondary" v-else-if="data[1].status.state === 'Fallen'">{{ data[1].status.description }}</span>
                         <span class="danger" v-else>{{ data[1].status.description }}</span>
                     </td>
 
                     <td v-if="data[1].status.state === 'Hospital' || data[1].status.state === 'Jail'">
-                        <span class="timer">{{ Math.round(data[1].status.until - Math.round(Date.now() / 1000)) }}</span>s
+                        <span class="timer" :data-until="data[1].status.until">{{ Math.round(data[1].status.until - Math.round(Date.now() / 1000)) }}</span>s
                     </td>
 
                     <!--
