@@ -109,26 +109,32 @@ export default {
                 console.log(`Updating timers for ${timers.length} players`);
                 for (let i = 0; i < timers.length; i++) {
 
-                    // let tsUntil = timers[i].getAttribute('data-until');
-                    let tsUntil = (Date.now()/1000);
+                    let tsUntil = timers[i].getAttribute('data-until');
+                    // let tsUntil = (Date.now()/1000);
                     let tsNow = (Date.now()/1000);
                     let sDiff = Math.round(tsUntil - tsNow);
 
+                    let hh = Math.floor(sDiff/3600);
+                    let mm = Math.floor((sDiff-(hh*3600))/60);
+                    let ss = sDiff-(hh*3600)-(mm*60);
+                    // hh = hh < 10 ? '0'+hh : hh;
+                    // mm = mm < 10 ? '0'+mm : mm;
+                    // ss = ss < 10 ? '0'+ss : ss;
+
                     if (sDiff > 3599 ) {
-                        timers[i].innerHTML = '> 1hr';
+                        timers[i].innerHTML = `${hh}h ${mm}m ${ss}s`;
                     }
                     else if (sDiff > 59) {
-                        timers[i].innerHTML = '> 1m';
+                        timers[i].innerHTML = `${mm}m ${ss}s`;
                     }
                     else if (sDiff > 0) {
-                        timers[i].innerHTML = `${sDiff.toString()}s`;
+                        // timers[i].innerHTML = `${sDiff.toString()}s`;
+                        timers[i].innerHTML = `${ss}s`;
                     }
                     else {
                         timers[i].innerHTML = 'Out!';
                         timers[i].parentElement.parentElement.style.backgroundColor = "rgba(10,250,10, 0.1)";
-                        // timers[i].parentElement.nextSibling.childNodes[0].classNames = 'primary';
-                        console.log(timers[i].parentElement.nextSibling.childNodes[0]);
-
+                        timers[i].parentElement.nextSibling.childNodes[0].className = 'primary';
                     }
                 }
             }, 1000);
@@ -223,7 +229,7 @@ export default {
                     <!--                    <template v-if=""></template>-->
 
                     <td>
-                        <a :href="'https://www.torn.com/profiles.php?XID=' + id" target="blank">
+                        <a :href="'https://www.torn.com/profiles.php?XID=' + data[0]" target="blank">
                             {{ data[1].name }}
                         </a>
                     </td>
@@ -244,33 +250,25 @@ export default {
                         {{ data[1].level }}
                     </td>
 
-                    <td v-if="this.windowWidth < 800">
-                        <span class="success" v-if="data[1].status.state === 'Okay'">Okay</span>
-                        <span class="info" v-else-if="data[1].status.state === 'Traveling' || data[1].status.state === 'Abroad'">Travel</span>
-                        <span class="secondary" v-else-if="data[1].status.state === 'Fallen'">Fallen</span>
-                        <span class="danger" v-else>Hospital</span>
-                    </td>
-                    <td v-else>
+                    <td>
                         <span class="success" v-if="data[1].status.state === 'Okay'">{{ data[1].status.description }}</span>
-                        <span class="info" v-else-if="data[1].status.state === 'Traveling' || data[1].status.state === 'Abroad'">{{ data[1].status.description }}</span>
+                        <span class="info" v-else-if="data[1].status.state === 'Traveling' || data[1].status.state === 'Abroad'">
+                            <template v-if="this.windowWidth < 800">
+                                Traveling
+                            </template>
+                            <template v-else>
+                                {{ data[1].status.description }}
+                            </template>
+                        </span>
                         <span class="secondary" v-else-if="data[1].status.state === 'Fallen'">{{ data[1].status.description }}</span>
-                        <span class="danger" v-else>{{ data[1].status.description }}</span>
+                        <span class="danger" v-else-if="data[1].status.state === 'Hospital'">Hospital</span>
+                        <span class="danger" v-else-if="data[1].status.state === 'Jail'">Jail</span>
+                        <span class="secondary" v-else>Unknown</span>
                     </td>
 
                     <td v-if="data[1].status.state === 'Hospital' || data[1].status.state === 'Jail'">
                         <span class="timer" :data-until="data[1].status.until"></span>
                     </td>
-                    <!-- {{ Math.round(data[1].status.until - Math.round(Date.now() / 1000)) }}s -->
-
-                    <!--
-                    {{
-                            data[1].status.until - Math.round(Date.now() / 1000) > 3600 ?
-                                    Math.round((data[1].status.until - Math.round(Date.now() / 1000)) / 60 / 60) + '&nbsp;h' :
-                                    data[1].status.until - Math.round(Date.now() / 1000) > 60 ?
-                                            Math.round((data[1].status.until - Math.round(Date.now() / 1000)) / 60) + '&nbsp;m' :
-                                            Math.round(data[1].status.until - Math.round(Date.now() / 1000)) + '&nbsp;s'
-                        }}
-                    -->
                     <td v-else>
                         &nbsp;
                     </td>
@@ -285,7 +283,7 @@ export default {
                         <template v-else>
                             <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + id" target="blank"
                                class="primary">
-                                <i class="fa-solid fa-gun fa-fade"></i>
+                                <i class="fa-solid fa-gun"></i>
                             </a>
                         </template>
                     </td>
