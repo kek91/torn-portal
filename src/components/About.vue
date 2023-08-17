@@ -41,11 +41,11 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
-        <li><b>Beta</b><br>
+        <li><b>0.2.8</b><br>
             - Fix responsive tables for several tools<br>
             - Rename "Hospital Targets" to "War"<br>
             - Always fetch new data for Dashboard + Job Points features, and fallback to cached data if the request fails<br>
-            - [WIP] Made more progress on War feature<br>
+            - War feature completed<br>
         </li>
         <li><b>0.2.7</b><br>
             - Job Finder complete!<br>
