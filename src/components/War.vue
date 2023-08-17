@@ -114,13 +114,19 @@ export default {
                     let tsNow = (Date.now()/1000);
                     let sDiff = Math.round(tsUntil - tsNow);
 
-                    if (sDiff > 0) {
-                        timers[i].innerHTML = sDiff.toString();
+                    if (sDiff > 3599 ) {
+                        timers[i].innerHTML = '> 1hr';
+                    }
+                    else if (sDiff > 59) {
+                        timers[i].innerHTML = '> 1m';
+                    }
+                    else if (sDiff > 0) {
+                        timers[i].innerHTML = `${sDiff.toString()}s`;
                     }
                     else {
                         timers[i].innerHTML = 'Out!';
                         timers[i].parentElement.parentElement.style.backgroundColor = "rgba(10,250,10, 0.1)";
-
+                        // timers[i].parentElement.nextSibling.childNodes[0].classNames = 'primary';
                         console.log(timers[i].parentElement.nextSibling.childNodes[0]);
 
                     }
@@ -252,8 +258,9 @@ export default {
                     </td>
 
                     <td v-if="data[1].status.state === 'Hospital' || data[1].status.state === 'Jail'">
-                        <span class="timer" :data-until="data[1].status.until">{{ Math.round(data[1].status.until - Math.round(Date.now() / 1000)) }}</span>s
+                        <span class="timer" :data-until="data[1].status.until"></span>
                     </td>
+                    <!-- {{ Math.round(data[1].status.until - Math.round(Date.now() / 1000)) }}s -->
 
                     <!--
                     {{
