@@ -122,10 +122,12 @@ export default {
                     // ss = ss < 10 ? '0'+ss : ss;
 
                     if (sDiff > 3599 ) {
-                        timers[i].innerHTML = `${hh}h ${mm}m ${ss}s`;
+                        // timers[i].innerHTML = `${hh}h ${mm}m ${ss}s`;
+                        timers[i].innerHTML = `${hh}h`;
                     }
                     else if (sDiff > 59) {
-                        timers[i].innerHTML = `${mm}m ${ss}s`;
+                        // timers[i].innerHTML = `${mm}m ${ss}s`;
+                        timers[i].innerHTML = `${mm}m`;
                     }
                     else if (sDiff > 0) {
                         // timers[i].innerHTML = `${sDiff.toString()}s`;
@@ -209,7 +211,7 @@ export default {
 <template>
 
     <h1><i class="fa-solid fa-skull-crossbones"></i> War</h1>
-    <h2 class="center"><span id="currentFactionName"></span></h2>
+    <p class="center"><span id="currentFactionName"></span></p>
     <div class="loader"></div>
 
     <article v-if="factionData != null">
@@ -218,10 +220,10 @@ export default {
                 <tr>
                     <th>Name</th>
                     <th> &nbsp; </th>
-                    <th>Level</th>
-                    <th>Description</th>
-                    <th>Timer</th>
-                    <th class="center">Attack</th>
+                    <th>Lvl</th>
+                    <th>Desc</th>
+                    <th> &nbsp; </th>
+                    <th> &nbsp; </th>
                 </tr>
                 <!--<tr v-for="(data,id) in factionData.members" :key="id">-->
                 <tr v-for="(data,id) in factionMembers" :key="id">
@@ -277,13 +279,13 @@ export default {
                         <template v-if="data[1].status.state !== 'Okay'">
                             <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data[0]" target="blank"
                                class="secondary">
-                                <i class="fa-solid fa-gun"></i>
+                                <i class="fa-solid fa-gun fa-xl"></i>
                             </a>
                         </template>
                         <template v-else>
                             <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data[0]" target="blank"
                                class="primary">
-                                <i class="fa-solid fa-gun"></i>
+                                <i class="fa-solid fa-gun fa-xl"></i>
                             </a>
                         </template>
                     </td>
