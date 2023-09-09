@@ -2,6 +2,7 @@
 import Login from "@/components/Login.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import Transactions from "@/components/Transactions.vue";
+import Trades from "@/components/Trades.vue";
 import About from "@/components/About.vue";
 import CasinoWatcher from "@/components/CasinoWatcher.vue";
 import Error404 from "@/components/Error404.vue";
@@ -19,6 +20,7 @@ export default {
         Login,
         Dashboard,
         Transactions,
+        Trades,
         About,
         CasinoWatcher,
         Error404,
@@ -115,6 +117,11 @@ export default {
                         <i class="fa-solid fa-money-bill"></i>
                     </a>
                 </li>
+                <li data-tooltip="Trade statistics" data-placement="bottom">
+                    <a href="#trades" @click="setRouter('trades')">
+                        <i class="fa-solid fa-chart-simple"></i>
+                    </a>
+                </li>
                 <li data-tooltip="Job Points" data-placement="bottom">
                     <a href="#jobpoints" @click="setRouter('jobpoints')">
                         <i class="fa-solid fa-suitcase"></i>
@@ -125,7 +132,8 @@ export default {
                         <i class="fa-solid fa-magnifying-glass-dollar"></i>
                     </a>
                 </li>
-                <li :data-tooltip="casinoWatcher != null ? 'Casino Watcher (ACTIVE)' : 'Casino Watcher'" data-placement="bottom">
+                <li :data-tooltip="casinoWatcher != null ? 'Casino Watcher (ACTIVE)' : 'Casino Watcher'"
+                    data-placement="bottom">
                     <a href="#casinowatcher" @click="setRouter('casinowatcher')">
                         <i class="fa-brands fa-watchman-monitoring" :class="casinoWatcher != null ? 'danger' : ''"></i>
                     </a>
@@ -155,6 +163,10 @@ export default {
                     v-else-if="router === 'transactions'"
                     :user="user"
             ></Transactions>
+            <Trades
+                    v-else-if="router === 'trades'"
+                    :user="user"
+            ></Trades>
             <About
                     v-else-if="router === 'about'"
                     :app-version="appVersion"
@@ -282,17 +294,19 @@ h3 {
 }
 
 .info {
-    color:dodgerblue;
+    color: dodgerblue;
 }
 
 .centered, .center {
     text-align: center;
 }
+
 .left {
-    text-align:left;
+    text-align: left;
 }
+
 .right {
-    text-align:right;
+    text-align: right;
 }
 
 :root {

@@ -44,6 +44,7 @@ export default {
         <li><b>Beta</b><br>
             - Fix bug in attack icon link in War feature<br>
             - Misc minor bugfixes<br>
+            - WIP: Trades feature for showing trading history<br>
         </li>
         <li><b>0.2.8</b><br>
             - Fix responsive tables for several tools<br>
