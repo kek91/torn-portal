@@ -199,7 +199,9 @@ export default {
         });
 
         if (localStorage.getItem('hospitalTargetsFactionId')) {
-            this.factionId = localStorage.getItem('hospitalTargetsFactionId');
+            if (localStorage.getItem('hospitalTargetsFactionId') !== "null") {
+                this.factionId = localStorage.getItem('hospitalTargetsFactionId');
+            }
         }
 
         // Make sure we dont have any timers alrady running
