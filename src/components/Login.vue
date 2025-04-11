@@ -14,7 +14,14 @@ export default {
             let inputApiKey = document.getElementById('inputApiKey').value;
 
             try {
-                const response = await fetch(`https://api.torn.com/user/?selections=basic&key=${inputApiKey}`);
+                //const response = await fetch(`https://api.torn.com/user/?selections=basic&key=${inputApiKey}`);
+                const response = await fetch(`https://teknix.no/auth/${inputApiKey}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors'
+                });
                 const data = await response.json();
 
                 if(!response.ok || data.hasOwnProperty('error')) {
@@ -80,12 +87,7 @@ export default {
             <p>I don't, but some features might not work without enough permissions... start out with Basic permissions and see if it works. If not, just create a new API key with more permissions.</p>
         </details>
         <details>
-            <summary>Are you exploiting my API key to mug me?</summary>
-            <p><span class="strikethrough">No, but thanks for the idea :D</span><br><br>
-                The API keys are never sent anywhere. You can open the browser inspector (F12) and see for yourself that no outgoing requests are sent when logging in (except the api.torn.com request ofcourse)</p>
-        </details>
-        <details>
-            <summary>I still don't trust you!</summary>
+            <summary>I don't trust you!</summary>
             <p>Take a look in the code then, it's open source! <a href="https://github.com/kek91/torn-portal" target="_blank">https://github.com/kek91/torn-portal</a></p>
         </details>
 

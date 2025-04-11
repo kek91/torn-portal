@@ -199,7 +199,6 @@ export default {
 
     </main>
     <footer>
-        <p>The API key is not stored or sent anywhere, it's just cached locally in your browser storage.</p>
         <p>Click the Logout button if you wish to clear your cache.</p>
         <p>Questions? Contact <a href="https://www.torn.com/profiles.php?XID=2596327" target="_blank">Kvassh
             [2596327]</a> ingame.</p>

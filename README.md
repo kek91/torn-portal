@@ -1,29 +1,19 @@
-# torn-market
+# Torn Portal
 
-This template should help get you started developing with Vue 3 in Vite.
+Website is available at https://torn-portal.netlify.app
 
-## Recommended IDE Setup
+Simply login with an API key from Torn with basic permissions and try it out :)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Features
 
-## Customize configuration
+Torn Portal aims to offer some useful tools for all Torn players out there. Currently we have:
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Casino watcher
+- Hospital watcher for timing attacks in wars
+- Job finder
+- List all job points across all company types
+- See transaction history (feature still in progress)
 
-## Project Setup
+## Questions
 
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+Reach out to [Kvassh](https://www.torn.com/profiles.php?XID=2596327) in Torn City if you have any questions :)
