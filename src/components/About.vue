@@ -41,11 +41,12 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
-        <li><b>0.2.9</b><br>
+        <li><b>0.2.9 - 2025-04-13</b><br>
             - Some UI adjustment for nav menu<br>
             - API requests go through custom backend for incorporating BattleStatPredictor later on<br>
             - Avoid redundant network request when loading Dashboard<br>
             - WIP: Trades feature for showing trading history<br>
+            - WIP: Chain timer on War page<br>
         </li>
         <li><b>0.2.8</b><br>
             - Fix responsive tables for several tools<br>
