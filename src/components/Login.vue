@@ -2,7 +2,8 @@
 export default {
     name: 'Login',
     emits: [
-        "setUser"
+        "setUser",
+        "setProfile"
     ],
     methods: {
         async verifyKey(e) {
@@ -33,6 +34,7 @@ export default {
 
                 const user = {id: data.player_id, name: data.name, apiKey: inputApiKey};
                 this.$emit('setUser', user);
+                this.$emit('setProfile', data);
 
                 btnSubmitApiKey.setAttribute('aria-busy', 'false');
             } catch (e) {

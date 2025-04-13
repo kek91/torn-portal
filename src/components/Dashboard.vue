@@ -7,6 +7,10 @@ export default {
             type: Object,
             required: true
         },
+        profile: {
+            type: Object,
+            required: true
+        },
         casinoWatcher: {
             type: Number,
             required: false
@@ -14,7 +18,7 @@ export default {
     },
     data() {
         return {
-            profile: null
+            //profile: null // this is now automatically fetched during login
         }
     },
     emits: [
@@ -73,7 +77,9 @@ export default {
     },
     mounted() {
 
-        this.fetchProfile();
+        // Dont call fetchProfile anymore, 
+        // this is automatically saved into localStorage after logging in
+        //this.fetchProfile();
     }
 }
 </script>
