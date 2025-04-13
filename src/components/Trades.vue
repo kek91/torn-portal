@@ -203,7 +203,7 @@ export default {
 
         },
         refreshData(days) {
-            this.fetchLog(days).then((log) => {
+            /*this.fetchLog(days).then((log) => {
                 if (log != null) {
                     console.log("Fetched log from Torn API! Saving to localStorage");
                     localStorage.setItem('trades', JSON.stringify(log));
@@ -211,7 +211,10 @@ export default {
                 } else {
                     console.warn("Log is empty... API troubles?");
                 }
-            })
+            })*/
+
+            let sectionMoney = document.getElementById('sectionMoney');
+            sectionMoney.textContent = "Sorry, this feature is still under development.";
         }
     },
     mounted() {

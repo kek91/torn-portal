@@ -41,9 +41,10 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
-        <li><b>Beta</b><br>
-            - Fix bug in attack icon link in War feature<br>
-            - Misc minor bugfixes<br>
+        <li><b>0.2.9</b><br>
+            - Some UI adjustment for nav menu<br>
+            - API requests go through custom backend for incorporating BattleStatPredictor later on<br>
+            - Avoid redundant network request when loading Dashboard<br>
             - WIP: Trades feature for showing trading history<br>
         </li>
         <li><b>0.2.8</b><br>
@@ -51,6 +52,8 @@ export default {
             - Rename "Hospital Targets" to "War"<br>
             - Always fetch new data for Dashboard + Job Points features, and fallback to cached data if the request fails<br>
             - War feature completed<br>
+            - Fix bug in attack icon link in War feature<br>
+            - Misc minor bugfixes<br>
         </li>
         <li><b>0.2.7</b><br>
             - Job Finder complete!<br>

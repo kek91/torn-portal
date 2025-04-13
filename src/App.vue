@@ -129,7 +129,7 @@ export default {
                 </li>
                 <li data-tooltip="Trade statistics" data-placement="bottom">
                     <a href="#trades" @click="setRouter('trades')">
-                        <i class="fa-solid fa-2x fa-chart-simple"></i>
+                        <i class="fa-solid fa-2x fa-arrow-right-arrow-left"></i>
                     </a>
                 </li>
                 <li data-tooltip="Job Points" data-placement="bottom">
@@ -246,12 +246,16 @@ header nav ul li a {
     color: #fff;
     font-size: 0.8rem;
 }
-
 header nav#secondaryNav ul {
     margin:0 auto;
-    overflow-y:hidden;
-    overflow-x:auto;
 }
+@media (max-width: 400px) {
+    header nav#secondaryNav ul {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+}
+
 header nav#secondaryNav ul li a {
     font-size: 1.2rem;
     /*border:1px solid red;*/
