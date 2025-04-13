@@ -205,6 +205,7 @@ export default {
             <War
                     v-else-if="router === 'war'"
                     :user="user"
+                    :profile="profile"
             ></War>
             <Error404 v-else></Error404>
         </div>
