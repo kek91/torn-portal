@@ -50,6 +50,7 @@ export default {
             - Chain timer on War page fully implemented<br>
             - Minor bugfixes and technical improvements<br>
             - Upgraded all dependencies<br>
+            - Add battlestat prediction on War page<br>
         </li>
 
         <li><b>0.2.9 - 2025-04-13</b><br>
