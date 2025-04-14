@@ -255,6 +255,25 @@ header nav#secondaryNav ul {
         overflow-x: auto;
         overflow-y: hidden;
     }
+    header nav#secondaryNav .fa-2x {
+        font-size: 2rem;
+    }
+
+    /* For Chrome, Edge, Safari */
+    header nav#secondaryNav ul::-webkit-scrollbar {
+    width: 5px;
+    height: 5px; /* for horizontal scrollbar */
+    }
+
+    header nav#secondaryNav ul::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+    }
+
+    header nav#secondaryNav ul::-webkit-scrollbar-track {
+    background: transparent;
+    }
+
 }
 
 header nav#secondaryNav ul li a {
@@ -342,6 +361,10 @@ hr.blue {
 
 [data-tooltip]:not(a,button,input) {
     border: 0;
+}
+
+[data-tooltip]:not(a,button,input,[role=button]) {
+    border:0;
 }
 
 </style>
