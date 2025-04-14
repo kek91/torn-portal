@@ -41,13 +41,24 @@ export default {
 
     <h2>Changelog</h2>
     <ul>
+
+        <li><b>In progress/Planned</b><br>
+            - Trades feature for showing trading history<br>
+        </li>
+
+        <li><b>0.2.10 - 2025-04-14</b><br>
+            - Chain timer on War page fully implemented<br>
+            - Minor bugfixes and technical improvements<br>
+            - Upgraded all dependencies<br>
+        </li>
+
         <li><b>0.2.9 - 2025-04-13</b><br>
             - Some UI adjustment for nav menu<br>
             - API requests go through custom backend for incorporating BattleStatPredictor later on<br>
             - Avoid redundant network request when loading Dashboard<br>
-            - WIP: Trades feature for showing trading history<br>
             - WIP: Chain timer on War page<br>
         </li>
+
         <li><b>0.2.8</b><br>
             - Fix responsive tables for several tools<br>
             - Rename "Hospital Targets" to "War"<br>
