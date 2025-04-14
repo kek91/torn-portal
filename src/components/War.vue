@@ -207,40 +207,51 @@ export default {
                 e.preventDefault();
             }
 
-            localStorage.setItem('hospitalTargetsFactionId', this.factionId);
+            try {
 
-            this.toggleLoader(true);
-            this.stopTimers();
+                localStorage.setItem('hospitalTargetsFactionId', this.factionId);
 
-            this.getWarInfo(this.factionId).then(data => {
-                this.factionData = data;
-                this.factionIdMine = data.factionIdMine;
-                this.factionNameMine = data.factionNameMine;
-                this.factionMembers = this.sortFactionMembersByHospTime(data.factionMembersOpponent.members);
+                const el = document.getElementById('currentFactionName');
 
-                if (data.status === "war") {
-                    this.factionIdOpponent = data.factionIdOpponent;
-                    this.factionNameOpponent = data.factionNameOpponent;
-                    this.rwScoreMine = data.rwScoreMine;
-                    this.rwScoreOpponent = data.rwScoreOpponent;
-                    document.getElementById('currentFactionName').innerHTML = `<span class="success">${this.factionNameMine} (${ this.$filters.toShortNumber(this.rwScoreMine) })</span><br>
-                    vs<br>
-                    <span class="danger">${this.factionNameOpponent} (${this.$filters.toShortNumber(this.rwScoreOpponent)})</span>`;
-                } else {    
-                    document.getElementById('currentFactionName').innerHTML = `<span class="success">${this.factionNameMine}</span><br>Not currently in war`;
-                }
-                this.activateTimers();
-                this.showChainInfo();
-                this.toggleLoader(false);
-            }).catch(e => {
-                console.error("Error fetching war info: ", e);
-                this.$notify({
-                    title: "Error",
-                    text: `${e}`,
-                    type: "error"
+                this.toggleLoader(true);
+                this.stopTimers();
+
+                /* Reset existing data */
+                this.factionData = null;
+                el.innerHTML = `<span class="info">Loading war info...</span>`;
+
+                this.getWarInfo(this.factionId).then(data => {
+                    this.factionData = data;
+                    this.factionIdMine = data.factionIdMine;
+                    this.factionNameMine = data.factionNameMine;
+                    this.factionMembers = this.sortFactionMembersByHospTime(data.factionMembersOpponent.members);
+
+                    if (data.status === "war") {
+                        this.factionIdOpponent = data.factionIdOpponent;
+                        this.factionNameOpponent = data.factionNameOpponent;
+                        this.rwScoreMine = data.rwScoreMine;
+                        this.rwScoreOpponent = data.rwScoreOpponent;
+                        el.innerHTML = `<span class="success">${this.factionNameMine} (${ this.$filters.toShortNumber(this.rwScoreMine) })</span> 
+                        vs 
+                        <span class="danger">${this.factionNameOpponent} (${this.$filters.toShortNumber(this.rwScoreOpponent)})</span>`;
+                    } else {    
+                        el.innerHTML = `<span class="success">${this.factionNameMine}</span><br>Not currently in war`;
+                    }
+                    this.activateTimers();
+                    this.showChainInfo();
+                    this.toggleLoader(false);
+                }).catch(e => {
+                    console.error("Error fetching war info: ", e);
+                    this.$notify({
+                        title: "Error",
+                        text: `${e}`,
+                        type: "error"
+                    });
+                    this.toggleLoader(false);
                 });
-                this.toggleLoader(false);
-            });
+            } catch(e) {
+                console.error("Error occurred when getting war info: ", e);
+            }
         },
 
         showChainInfo() {
@@ -277,12 +288,15 @@ export default {
                         this.activateChainTimer();
 
                     } else {
-                        document.getElementById('currentFactionChain').innerHTML = `<span>No active chain</span>`;
+                        el.innerHTML = `<span>No active chain</span>`;
                     }
                 }).catch(e => {
                     console.error("Error fetching chain info: ", e);
-                    document.getElementById('currentFactionChain').innerHTML = `<code style="max-width:90%">
-                    ${JSON.stringify(data)}</code>`;
+                    this.$notify({
+                        title: "Error",
+                        text: `${e}`,
+                        type: "error"
+                    });
                     this.toggleLoader(false);
                 });
             } catch (e) {
@@ -315,7 +329,7 @@ export default {
         <button @click="showHospitalTargets">&#8635; Members</button>
         <button @click="showChainInfo">&#8635; Chain</button>
     </div>
-    
+
     <p class="center"><span id="currentFactionName"></span></p>
     <p class="center"><span id="currentFactionChain"></span></p>
     <div class="loader"></div>
