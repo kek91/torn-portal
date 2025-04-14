@@ -24,7 +24,9 @@ export default {
             rwScoreMine: null,
             rwScoreOpponent: null,
             windowWidth: window.innerWidth,
-            intervalId: null
+            intervalId: null,
+            chainIntervalId: null,
+            chainStart: null,
         }
     },
     methods: {
@@ -147,16 +149,57 @@ export default {
                     }
                     else {
                         timers[i].innerHTML = 'Out!';
-                        timers[i].parentElement.parentElement.style.backgroundColor = "rgba(10,250,10, 0.1)";
+                        // timers[i].parentElement.parentElement.style.backgroundColor = "rgba(10,250,10, 0.1)";
+                        timers[i].parentElement.parentElement.style.setProperty('background-color', 'rgba(10,250,10, 0.1)', 'important');
                         timers[i].parentElement.nextSibling.childNodes[0].className = 'primary';
                     }
                 }
+            }, 1000);
+        },
+        activateChainTimer() {
+            this.chainIntervalId = setInterval(() => {
+                console.log(`Updating chain timer`);
+                
+                let timer = document.querySelector('.chainTimer');
+                let tsUntil = timer.getAttribute('data-timeout');
+
+                // let tsUntil = (Date.now()/1000);
+                let tsNow = (Date.now() / 1000);
+                let sDiff = Math.round(tsUntil - tsNow);
+
+                let hh = Math.floor(sDiff / 3600);
+                let mm = Math.floor((sDiff - (hh * 3600)) / 60);
+                let ss = sDiff - (hh * 3600) - (mm * 60);
+
+                if (sDiff > 179) {
+                    timer.classList = 'chainTimer success';
+                    timer.innerHTML = `${mm}m ${ss % 60}s`;
+                } else if (sDiff > 119) {
+                    timer.classList = 'chainTimer warning';
+                    timer.innerHTML = `${mm}m ${ss % 60}s`;
+                } else if (sDiff > 0) {
+                    timer.classList = 'chainTimer danger';
+                    timer.innerHTML = `${ss}s`;
+                } else {
+                    timer.classList = 'chainTimer secondary';
+                    timer.innerHTML = 'Ended!';
+                }
+                
             }, 1000);
         },
 
         stopTimers() {
             clearInterval(this.intervalId);
             this.intervalId = null;
+        },
+        stopChainTimer() {
+            clearInterval(this.chainIntervalId);
+            this.chainIntervalId = null;
+        },
+
+        resetHospitalTargetsToMyFaction() {
+            this.factionId = this.profile.faction.faction_id;
+            this.showHospitalTargets();
         },
 
         showHospitalTargets(e) {
@@ -166,27 +209,85 @@ export default {
 
             localStorage.setItem('hospitalTargetsFactionId', this.factionId);
 
+            this.toggleLoader(true);
+            this.stopTimers();
+
             this.getWarInfo(this.factionId).then(data => {
-                console.log(data);
+                this.factionData = data;
+                this.factionIdMine = data.factionIdMine;
+                this.factionNameMine = data.factionNameMine;
+                this.factionMembers = this.sortFactionMembersByHospTime(data.factionMembersOpponent.members);
+
                 if (data.status === "war") {
-                    this.factionData = data;
-                    this.factionIdMine = data.factionIdMine;
-                    this.factionNameMine = data.factionNameMine;
                     this.factionIdOpponent = data.factionIdOpponent;
                     this.factionNameOpponent = data.factionNameOpponent;
                     this.rwScoreMine = data.rwScoreMine;
                     this.rwScoreOpponent = data.rwScoreOpponent;
-                    this.factionMembers = this.sortFactionMembersByHospTime(data.factionMembersOpponent.members);
-                    document.getElementById('currentFactionName').innerHTML = `<span class="success">${this.factionNameMine} (${this.rwScoreMine})</span> vs <span class="danger">${this.factionNameOpponent} (${this.rwScoreOpponent})</span>`;
-                    this.activateTimers();
-
-                    // Get and show chain info as well
-                    this.getChainInfo(this.factionIdMine).then(data => {
-                        document.getElementById('currentFactionChain').innerHTML = `<code style="max-width:90%">
-                        ${JSON.stringify(data)}</code>`;
-                    });
+                    document.getElementById('currentFactionName').innerHTML = `<span class="success">${this.factionNameMine} (${ this.$filters.toShortNumber(this.rwScoreMine) })</span><br>
+                    vs<br>
+                    <span class="danger">${this.factionNameOpponent} (${this.$filters.toShortNumber(this.rwScoreOpponent)})</span>`;
+                } else {    
+                    document.getElementById('currentFactionName').innerHTML = `<span class="success">${this.factionNameMine}</span><br>Not currently in war`;
                 }
+                this.activateTimers();
+                this.showChainInfo();
+                this.toggleLoader(false);
+            }).catch(e => {
+                console.error("Error fetching war info: ", e);
+                this.$notify({
+                    title: "Error",
+                    text: `${e}`,
+                    type: "error"
+                });
+                this.toggleLoader(false);
             });
+        },
+
+        showChainInfo() {
+
+            this.stopChainTimer();
+
+            try {
+
+                this.toggleLoader(true);
+
+                const el = document.getElementById('currentFactionChain');
+
+                if (this.factionIdMine === null || this.factionIdMine === undefined) {
+                    console.error("Faction ID is null");
+                    return;
+                }
+                el.innerHTML = `<span class="info">Loading chain info...</span>`;
+                this.getChainInfo(this.factionIdMine).then(data => {
+                    this.toggleLoader(false);
+                    if (data && data.chain && data.chain.current > 0) {
+
+                        const chainReportUrl = `https://www.torn.com/war.php?step=chainreport&chainID=${data.chain.id}`;
+                        
+                        if (data.chain.cooldown > 0) {
+                            el.innerHTML = `<a href="${chainReportUrl}" target="_blank" class="danger">Chain: ${data.chain.current}/${data.chain.max} - In cooldown (${Math.floor(data.chain.cooldown/60)} min remaining)</a>`;
+                            return;
+                        }
+
+                        el.innerHTML = `<span class="info">Chain active!</span><br>
+                        ${data.chain.current}/${data.chain.max}<br>
+                        ${data.chain.max-data.chain.current} hits until bonus!<br>
+                        <b><span class="chainTimer" data-timeout="${data.chain.end}">Calculating time left...</span></b>`;
+
+                        this.activateChainTimer();
+
+                    } else {
+                        document.getElementById('currentFactionChain').innerHTML = `<span>No active chain</span>`;
+                    }
+                }).catch(e => {
+                    console.error("Error fetching chain info: ", e);
+                    document.getElementById('currentFactionChain').innerHTML = `<code style="max-width:90%">
+                    ${JSON.stringify(data)}</code>`;
+                    this.toggleLoader(false);
+                });
+            } catch (e) {
+                console.error("Could not output chain info: ", e);
+            }
         }
     },
     mounted() {
@@ -201,6 +302,7 @@ export default {
 
         // Make sure we dont have any timers alrady running
         this.stopTimers();
+        this.stopChainTimer();
     }
 }
 </script>
@@ -208,88 +310,106 @@ export default {
 <template>
 
     <h1><i class="fa-solid fa-skull-crossbones"></i> War</h1>
+    
+    <div role="group">
+        <button @click="showHospitalTargets">&#8635; Members</button>
+        <button @click="showChainInfo">&#8635; Chain</button>
+    </div>
+    
     <p class="center"><span id="currentFactionName"></span></p>
     <p class="center"><span id="currentFactionChain"></span></p>
     <div class="loader"></div>
 
     <article v-if="factionData != null">
-        <figure>
+        <figure class="overflow-auto">
             <table>
-                <tr>
-                    <th>Name</th>
-                    <th> &nbsp; </th>
-                    <th>Lvl</th>
-                    <th>Desc</th>
-                    <th> &nbsp; </th>
-                    <th> &nbsp; </th>
-                </tr>
-                <tr v-for="(data, id) in factionMembers" :key="id">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th> &nbsp; </th>
+                        <th>Lvl</th>
+                        <th>Desc</th>
+                        <th> &nbsp; </th>
+                        <th> &nbsp; </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(data, id) in factionMembers" :key="id">
 
-                    <td>
-                        <a :href="'https://www.torn.com/profiles.php?XID=' + data.id" target="blank">
-                            {{ data.name }}
-                        </a>
-                    </td>
+                        <td>
+                            <a :href="'https://www.torn.com/profiles.php?XID=' + data.id" target="blank">
+                                <template v-if="this.windowWidth < 375">
+                                    {{ data.name.substring(0,6) }}
+                                </template>
+                                <template v-else-if="this.windowWidth < 420">
+                                    {{ data.name.substring(0,10) }}
+                                </template>
+                                <template v-else>
+                                    {{ data.name }}
+                                </template>
+                            </a>
+                        </td>
 
-                    <td>
-                        <span class="success" :data-tooltip="'Online - ' + data.last_action.relative"
-                            v-if="data.last_action.status === 'Online'">
-                            <i class="fa-solid fa-circle fa-2xs"></i>
-                        </span>
-                        <span class="warning" :data-tooltip="'Idle - ' + data.last_action.relative"
-                            v-else-if="data.last_action.status === 'Idle'">
-                            <i class="fa-solid fa-circle fa-2xs"></i>
-                        </span>
-                        <span class="danger" :data-tooltip="'Offline - ' + data.last_action.relative" v-else>
-                            <i class="fa-solid fa-circle fa-2xs"></i>
-                        </span>
-                    </td>
+                        <td>
+                            <span class="success" :data-tooltip="'Online - ' + data.last_action.relative"
+                                v-if="data.last_action.status === 'Online'">
+                                <i class="fa-solid fa-circle fa-2xs"></i>
+                            </span>
+                            <span class="warning" :data-tooltip="'Idle - ' + data.last_action.relative"
+                                v-else-if="data.last_action.status === 'Idle'">
+                                <i class="fa-solid fa-circle fa-2xs"></i>
+                            </span>
+                            <span class="danger" :data-tooltip="'Offline - ' + data.last_action.relative" v-else>
+                                <i class="fa-solid fa-circle fa-2xs"></i>
+                            </span>
+                        </td>
 
-                    <td>
-                        {{ data.level }}
-                    </td>
+                        <td>
+                            {{ data.level }}
+                        </td>
 
-                    <td>
-                        <span class="success" v-if="data.status.state === 'Okay'">{{ data.status.description }}</span>
-                        <span class="info"
-                            v-else-if="data.status.state === 'Traveling' || data.status.state === 'Abroad'">
-                            <template v-if="this.windowWidth < 800">
-                                Traveling
+                        <td>
+                            <span class="success" v-if="data.status.state === 'Okay'">{{ data.status.description }}</span>
+                            <span class="info"
+                                v-else-if="data.status.state === 'Traveling' || data.status.state === 'Abroad'">
+                                <template v-if="this.windowWidth < 800">
+                                    Traveling
+                                </template>
+                                <template v-else>
+                                    {{ data.status.description }}
+                                </template>
+                            </span>
+                            <span class="secondary" v-else-if="data.status.state === 'Fallen'">{{ data.status.description
+                                }}</span>
+                            <span class="danger" v-else-if="data.status.state === 'Hospital'">Hospital</span>
+                            <span class="danger" v-else-if="data.status.state === 'Jail'">Jail</span>
+                            <span class="secondary" v-else>Unknown</span>
+                        </td>
+
+                        <td v-if="data.status.state === 'Hospital' || data.status.state === 'Jail'">
+                            <span class="timer" :data-until="data.status.until"></span>
+                        </td>
+                        <td v-else>
+                            &nbsp;
+                        </td>
+
+                        <td class="center">
+                            <template v-if="data.status.state !== 'Okay'">
+                                <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data.id" target="blank"
+                                    class="secondary">
+                                    <i class="fa-solid fa-gun fa-xl"></i>
+                                </a>
                             </template>
                             <template v-else>
-                                {{ data.status.description }}
+                                <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data.id" target="blank"
+                                    class="primary">
+                                    <i class="fa-solid fa-gun fa-xl"></i>
+                                </a>
                             </template>
-                        </span>
-                        <span class="secondary" v-else-if="data.status.state === 'Fallen'">{{ data.status.description
-                            }}</span>
-                        <span class="danger" v-else-if="data.status.state === 'Hospital'">Hospital</span>
-                        <span class="danger" v-else-if="data.status.state === 'Jail'">Jail</span>
-                        <span class="secondary" v-else>Unknown</span>
-                    </td>
+                        </td>
 
-                    <td v-if="data.status.state === 'Hospital' || data.status.state === 'Jail'">
-                        <span class="timer" :data-until="data.status.until"></span>
-                    </td>
-                    <td v-else>
-                        &nbsp;
-                    </td>
-
-                    <td class="center">
-                        <template v-if="data.status.state !== 'Okay'">
-                            <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data.id" target="blank"
-                                class="secondary">
-                                <i class="fa-solid fa-gun fa-xl"></i>
-                            </a>
-                        </template>
-                        <template v-else>
-                            <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data.id" target="blank"
-                                class="primary">
-                                <i class="fa-solid fa-gun fa-xl"></i>
-                            </a>
-                        </template>
-                    </td>
-
-                </tr>
+                    </tr>
+                </tbody>
             </table>
         </figure>
     </article>
@@ -305,6 +425,7 @@ export default {
         <form @submit="showHospitalTargets">
             <input type="text" id="inputFactionId" v-model="factionId" placeholder="Faction ID...">
             <button type="submit" id="btnSubmitHospitalTargets">See targets</button>
+            <button type="button" class="secondary" v-on:click="resetHospitalTargetsToMyFaction">Reset</button>
         </form>
     </article>
 
@@ -314,7 +435,7 @@ export default {
 <style scoped>
 table th,
 table td {
-    padding: 8px;
+    padding: 8px 2px;
 }
 
 table th,
