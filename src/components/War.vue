@@ -27,6 +27,7 @@ export default {
             intervalId: null,
             chainIntervalId: null,
             chainStart: null,
+            myBattlestats: null,
         }
     },
     methods: {
@@ -226,6 +227,11 @@ export default {
                     this.factionNameMine = data.factionNameMine;
                     this.factionMembers = this.sortFactionMembersByHospTime(data.factionMembersOpponent.members);
 
+                    this.factionMembers.forEach(async member => {
+                        const bstats = await this.fetchBattlestats(member.id) || 0;
+                        member.bstats = bstats;
+                    });
+                    
                     if (data.status === "war") {
                         this.factionIdOpponent = data.factionIdOpponent;
                         this.factionNameOpponent = data.factionNameOpponent;
@@ -302,16 +308,106 @@ export default {
             } catch (e) {
                 console.error("Could not output chain info: ", e);
             }
-        }
-    },
-    mounted() {
+        },
 
-        if (localStorage.getItem('hospitalTargetsFactionId')) {
-            if (localStorage.getItem('hospitalTargetsFactionId') !== "null") {
-                this.factionId = localStorage.getItem('hospitalTargetsFactionId');
+        async generateBattlestats(userid) {
+
+            return new Promise(resolve => {
+                if (!userid) {
+                    console.log("userid is not set");
+                    resolve(null);
+                }
+
+                fetch(`https://teknix.no/battlestats/${userid}/${this.user.apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.hasOwnProperty('battlestats')) {
+                        resolve(data);
+                    } else {
+                        resolve({
+                            "error": "API error from tornhelper-node",
+                            "timestamp": Date.now()
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    resolve({
+                        "error": "API error from tornhelper-node",
+                        "timestamp": Date.now()
+                    });
+                });
+            });
+        },
+
+        async fetchBattlestats(userid = null) {
+
+            if (!userid) {
+                console.error("Missing torn userid");
+                return;
+            }
+
+            /** Check if we have cached bstats */
+            let bstats = JSON.parse(localStorage.getItem(`battlestats_${userid}`));
+            if (bstats && bstats.hasOwnProperty('battlestats')) {
+                if (((Date.now() / 1000) - bstats.timestamp) > (60 * 60 * 24 * 30)) {
+                    /** Old prediction is over a month old */
+                    console.log('Old prediction is over a month old, fetching new prediction');
+                    bstats = await this.generateBattlestats(userid);
+                    console.log(bstats);
+                    if (bstats.hasOwnProperty('battlestats')) {
+                        localStorage.setItem(`battlestats_${userid}`, JSON.stringify(bstats));
+                        console.log(`Saved new prediction (${JSON.stringify(bstats)}) for userid: ${userid} to localStorage`);
+                    }
+                }
+            } else {
+                /** No predictions */
+                bstats = await this.generateBattlestats(userid);
+                if (bstats.hasOwnProperty('battlestats')) {
+                    localStorage.setItem(`battlestats_${userid}`, JSON.stringify(bstats));
+                    console.log(`Saved new prediction (${JSON.stringify(bstats)}) for userid: ${userid} to localStorage`);
+                }
+            }
+            return bstats;
+        },
+
+        saveMyBattlestats() {
+            if(this.myBattlestats !== null) {
+                localStorage.setItem('myBattlestats', this.myBattlestats);
+            }
+        },
+        loadMyBattlestats() {
+            try {
+                this.myBattlestats = (localStorage.getItem('myBattlestats') || 0);
+            } catch(e) {
+                console.error("Could not load myBattlestats");
+            }
+        },
+
+        getBsClass(enemyBs) {
+            const ratio = enemyBs / this.myBattlestats;
+
+            if (ratio >= 1.0) {
+                return 'th-danger';
+            } else if (ratio >= 0.8) {
+                return 'th-warning';
+            } else if (ratio >= 0.6) {
+                return 'th-success';
+            } else {
+                return 'th-secondary';
             }
         }
 
+    },
+    mounted() {
+
+
+        try {
+            this.factionId = localStorage.getItem('hospitalTargetsFactionId');
+        } catch(e) {
+            console.error("Could not set factionId from localstorage, probably not used this tool before");
+        }
+        this.loadMyBattlestats();
         this.showHospitalTargets();
 
         // Make sure we dont have any timers alrady running
@@ -342,6 +438,7 @@ export default {
                         <th>Name</th>
                         <th> &nbsp; </th>
                         <th>Lvl</th>
+                        <th>Stats</th>
                         <th>Desc</th>
                         <th> &nbsp; </th>
                         <th> &nbsp; </th>
@@ -383,11 +480,15 @@ export default {
                         </td>
 
                         <td>
+                            <span :class="'th-bsp ' + getBsClass(data.bstats.battlestats)">{{ $filters.shortenBs(data.bstats.battlestats) }}</span>
+                        </td>
+
+                        <td>
                             <span class="success" v-if="data.status.state === 'Okay'">{{ data.status.description }}</span>
                             <span class="info"
                                 v-else-if="data.status.state === 'Traveling' || data.status.state === 'Abroad'">
                                 <template v-if="this.windowWidth < 800">
-                                    Traveling
+                                    Travel
                                 </template>
                                 <template v-else>
                                     {{ data.status.description }}
@@ -395,7 +496,7 @@ export default {
                             </span>
                             <span class="secondary" v-else-if="data.status.state === 'Fallen'">{{ data.status.description
                                 }}</span>
-                            <span class="danger" v-else-if="data.status.state === 'Hospital'">Hospital</span>
+                            <span class="danger" v-else-if="data.status.state === 'Hospital'">Hosp</span>
                             <span class="danger" v-else-if="data.status.state === 'Jail'">Jail</span>
                             <span class="secondary" v-else>Unknown</span>
                         </td>
@@ -443,6 +544,24 @@ export default {
         </form>
     </article>
 
+    <article>
+        <p>
+            If you wish to colorize the battlestats estimation (compared to yours),
+            then enter your battlestats in the field below.
+        </p>
+        <p>
+            Color legend:<br>
+            <span class="th-bsp th-danger" style="width:90%;"> Strong: More than 100% of your stats </span>
+            <span class="th-bsp th-warning" style="width:90%;"> Fair: Up to 100% of your stats </span>
+            <span class="th-bsp th-success" style="width:90%;"> Easy: Up to 80% of your stats</span>
+            <span class="th-bsp th-secondary" style="width:90%;"> Weak: Less than 60% of your stats</span>
+        </p>
+        <form @submit="saveMyBattlestats">
+            <input type="number" v-model="myBattlestats" placeholder="123456">
+            <button type="submit">Save</button>
+        </form>
+    </article>
+
 
 </template>
 
@@ -459,5 +578,37 @@ table td {
 
 table tr:hover {
     background: rgba(0, 0, 0, 0.05);
+}
+.th-bsp {
+    width:38px;
+    height:24px;
+    /*padding:4px;*/
+    display:block;
+    font-size:0.8rem;
+    /*font-weight:bold;*/
+    vertical-align: middle;
+    text-align:center;
+    /*line-height:10px;*/
+    /*overflow:hidden;*/
+    /*position:absolute;*/
+    /*cursor:pointer;*/
+    color:#000 !important;
+}
+
+.th-danger {
+    border:1px solid red;
+    background:rgba(255,0,0,0.2);
+}
+.th-warning {
+    border:1px solid orange;
+    background:rgba(255,200,100,0.2)
+}
+.th-success {
+    border:1px solid green;
+    background:rgba(0,255,0,0.2)
+}
+.th-secondary {
+    border:1px solid #999;
+    background:rgba(0, 0, 0, 0.2);
 }
 </style>

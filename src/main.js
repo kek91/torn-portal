@@ -29,6 +29,17 @@ app.config.globalProperties.$filters = {
         } else {
             return `< 1K`;
         }
+    },
+    shortenBs(bs) {
+        if (bs >= 1000000000) {
+            return `${(bs / 1000000000).toFixed(1)}B`;
+        } else if (bs >= 1000000) {
+            return `${(bs / 1000000).toFixed(0)}M`;
+        } else if (bs >= 1000) {
+            return `${(bs / 1000).toFixed(0)}K`;
+        } else {
+            return `< 1K`;
+        }
     }
 };
 
