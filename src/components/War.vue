@@ -28,6 +28,8 @@ export default {
             chainIntervalId: null,
             chainStart: null,
             myBattlestats: null,
+            myBattlestatsInput: null,
+            myBattleStatsResult: null,
         }
     },
     methods: {
@@ -184,6 +186,10 @@ export default {
                 } else {
                     timer.classList = 'chainTimer secondary';
                     timer.innerHTML = 'Ended!';
+                    this.stopChainTimer();
+                    setTimeout(() => {
+                        this.showChainInfo();
+                    }, 1000);
                 }
                 
             }, 1000);
@@ -198,12 +204,12 @@ export default {
             this.chainIntervalId = null;
         },
 
-        resetHospitalTargetsToMyFaction() {
+        async resetHospitalTargetsToMyFaction() {
             this.factionId = this.profile.faction.faction_id;
-            this.showHospitalTargets();
+            await this.showHospitalTargets();
         },
 
-        showHospitalTargets(e) {
+        async showHospitalTargets(e) {
             if (e) {
                 e.preventDefault();
             }
@@ -221,16 +227,24 @@ export default {
                 this.factionData = null;
                 el.innerHTML = `<span class="info">Loading war info...</span>`;
 
-                this.getWarInfo(this.factionId).then(data => {
+                this.getWarInfo(this.factionId).then(async data => {
                     this.factionData = data;
                     this.factionIdMine = data.factionIdMine;
                     this.factionNameMine = data.factionNameMine;
                     this.factionMembers = this.sortFactionMembersByHospTime(data.factionMembersOpponent.members);
 
                     this.factionMembers.forEach(async member => {
-                        const bstats = await this.fetchBattlestats(member.id) || 0;
+                        member.bstats = { battlestats: 0 }; // Set an initial value to avoid vue errors later on
+                        const bstats = await this.fetchBattlestats(member.id) || { battlestats: 0 };
                         member.bstats = bstats;
                     });
+
+                    // const promises = this.factionMembers.map(async member => {
+                    //     const bstats = await this.fetchBattlestats(member.id) || {battlestats:0};
+                    //     return { ...member, bstats }; // Return a new object with bstats
+                    // });
+
+                    // this.factionMembers = await Promise.all(promises);
                     
                     if (data.status === "war") {
                         this.factionIdOpponent = data.factionIdOpponent;
@@ -282,14 +296,17 @@ export default {
                         const chainReportUrl = `https://www.torn.com/war.php?step=chainreport&chainID=${data.chain.id}`;
                         
                         if (data.chain.cooldown > 0) {
-                            el.innerHTML = `<a href="${chainReportUrl}" target="_blank" class="danger">Chain: ${data.chain.current}/${data.chain.max} - In cooldown (${Math.floor(data.chain.cooldown/60)} min remaining)</a>`;
+                            el.innerHTML = `Chain is in cooldown!<br>
+                            ${data.chain.current}/${data.chain.max}<br>
+                            <a href="${chainReportUrl}" target="_blank">#${data.chain.id}</a>`;
+                            this.stopChainTimer();
                             return;
                         }
 
                         el.innerHTML = `<span class="info">Chain active!</span><br>
                         ${data.chain.current}/${data.chain.max}<br>
                         ${data.chain.max-data.chain.current} hits until bonus!<br>
-                        <b><span class="chainTimer" data-timeout="${data.chain.end}">Calculating time left...</span></b>`;
+                        <b><span class="chainTimer" data-timeout="${data.chain.end}">${Math.floor(data.chain.timeout/60)}m ${Math.floor(data.chain.timeout % 60)}s</span></b>`;
 
                         this.activateChainTimer();
 
@@ -371,14 +388,41 @@ export default {
             return bstats;
         },
 
+        processMyBattlestats() {
+            const value = this.myBattlestatsInput.toLowerCase();
+            const numberPart = parseFloat(value);
+            const unitPart = value.replace(/^[+-]?\d+(\.\d+)?/, '');
+
+            if (!isNaN(numberPart)) {
+                switch (unitPart) {
+                case 'k':
+                    this.myBattlestats = numberPart * 1000;
+                    break;
+                case 'm':
+                    this.myBattlestats = numberPart * 1000000;
+                    break;
+                case 'b':
+                    this.myBattlestats = numberPart * 1000000000;
+                    break;
+                default:
+                    this.myBattlestats = numberPart;
+                    break;
+                }
+            } else {
+                this.myBattlestats = null;
+            }
+            this.saveMyBattlestats();
+        },
         saveMyBattlestats() {
             if(this.myBattlestats !== null) {
                 localStorage.setItem('myBattlestats', this.myBattlestats);
+                this.myBattleStatsResult = `<span class="success">Saved: <b>${this.$filters.toNumberFormat(this.myBattlestats)}</b></span>`;
             }
         },
         loadMyBattlestats() {
             try {
                 this.myBattlestats = (localStorage.getItem('myBattlestats') || 0);
+                this.myBattlestatsInput = this.$filters.shortenBs(this.myBattlestats);
             } catch(e) {
                 console.error("Could not load myBattlestats");
             }
@@ -399,7 +443,7 @@ export default {
         }
 
     },
-    mounted() {
+    async mounted() {
 
 
         try {
@@ -408,7 +452,7 @@ export default {
             console.error("Could not set factionId from localstorage, probably not used this tool before");
         }
         this.loadMyBattlestats();
-        this.showHospitalTargets();
+        await this.showHospitalTargets();
 
         // Make sure we dont have any timers alrady running
         this.stopTimers();
@@ -480,7 +524,7 @@ export default {
                         </td>
 
                         <td>
-                            <span :class="'th-bsp ' + getBsClass(data.bstats.battlestats)">{{ $filters.shortenBs(data.bstats.battlestats) }}</span>
+                            <span :class="'th-bsp ' + getBsClass(data.bstats.battlestats || 0)">{{ $filters.shortenBs(data.bstats.battlestats || 0) }}</span>
                         </td>
 
                         <td>
@@ -549,17 +593,18 @@ export default {
             If you wish to colorize the battlestats estimation (compared to yours),
             then enter your battlestats in the field below.
         </p>
+        <form @submit.prevent="saveMyBattlestats">
+            <input type="text" v-model="myBattlestatsInput" v-on:input="processMyBattlestats" placeholder="Enter number or shortcut (i.e. 50k, 200m, 1.2b)">
+            <span v-html="myBattleStatsResult" style="display:block;"></span>
+        </form>
+        <hr>
         <p>
             Color legend:<br>
-            <span class="th-bsp th-danger" style="width:90%;"> Strong: More than 100% of your stats </span>
-            <span class="th-bsp th-warning" style="width:90%;"> Fair: Up to 100% of your stats </span>
-            <span class="th-bsp th-success" style="width:90%;"> Easy: Up to 80% of your stats</span>
-            <span class="th-bsp th-secondary" style="width:90%;"> Weak: Less than 60% of your stats</span>
+            <span class="th-bsp th-danger" style="width:100%;"> Strong: More than 100% of your stats </span>
+            <span class="th-bsp th-warning" style="width:100%;"> Fair: Up to 100% of your stats </span>
+            <span class="th-bsp th-success" style="width:100%;"> Easy: Up to 80% of your stats</span>
+            <span class="th-bsp th-secondary" style="width:100%;"> Weak: Less than 60% of your stats</span>
         </p>
-        <form @submit="saveMyBattlestats">
-            <input type="number" v-model="myBattlestats" placeholder="123456">
-            <button type="submit">Save</button>
-        </form>
     </article>
 
 
@@ -580,18 +625,14 @@ table tr:hover {
     background: rgba(0, 0, 0, 0.05);
 }
 .th-bsp {
-    width:38px;
+    width:48px;
     height:24px;
-    /*padding:4px;*/
     display:block;
     font-size:0.8rem;
-    /*font-weight:bold;*/
-    vertical-align: middle;
+    font-weight:bold;
+    line-height:24px;
     text-align:center;
-    /*line-height:10px;*/
-    /*overflow:hidden;*/
-    /*position:absolute;*/
-    /*cursor:pointer;*/
+    overflow:hidden;
     color:#000 !important;
 }
 
