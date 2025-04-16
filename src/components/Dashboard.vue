@@ -122,4 +122,30 @@ export default {
 
     <a href="#" id="btnFetchProfile" role="button" @click="fetchProfile">Refresh</a>
 
+    <article class="debuginfo">
+
+        <p><b>Debug info</b></p>
+
+        <details name="debuginfouser">
+            <summary>user</summary>
+            <code v-html="JSON.stringify(user)"></code><br>
+        </details>
+
+        <details name="debuginfoprofile">
+            <summary>profile</summary>
+            <code v-html="JSON.stringify(profile)"></code><br>
+        </details>
+
+    </article>
+
 </template>
+
+<style scoped>
+code {
+    max-width:100%;
+}
+article.debuginfo {
+    margin-top:30px;
+    color:#999;
+}
+</style>

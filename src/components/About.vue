@@ -42,11 +42,17 @@ export default {
     <h2>Changelog</h2>
     <ul>
 
-        <li><b>In progress/Planned</b><br>
+        <!-- <li><b>In progress/Planned</b><br>
             - Trades feature for showing trading history<br>
+        </li> -->
+
+        <li><b>0.2.12 - 2025-04-16</b><br>
+            - Implement trades feature<br>
+            - Added debug info on dashboard<br>
+            - Misc bugfixes/improvements<br>
         </li>
 
-        <li><b>0.2.11 - 2025-04-xx</b><br>
+        <li><b>0.2.11</b><br>
             - Several bugfixes and technical improvements<br>
             - Battlestat prediction works in both dark + light mode<br>
             - Add button to toggle between light and dark mode<br>
