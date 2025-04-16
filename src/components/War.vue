@@ -30,6 +30,7 @@ export default {
             myBattlestats: null,
             myBattlestatsInput: null,
             myBattleStatsResult: null,
+            refreshTimersFailed: 0
         }
     },
     methods: {
@@ -122,11 +123,60 @@ export default {
 
         activateTimers() {
             this.intervalId = setInterval(() => {
-                let timers = document.getElementsByClassName('timer');
-                console.log(`Updating timers for ${timers.length} players`);
-                for (let i = 0; i < timers.length; i++) {
+                try {
+                    let timers = document.getElementsByClassName('timer');
+                    if (timers.length > 0) {
+                        console.log(`Updating timers for ${timers.length} players`);
+                        for (let i = 0; i < timers.length; i++) {
 
-                    let tsUntil = timers[i].getAttribute('data-until');
+                            let tsUntil = timers[i].getAttribute('data-until');
+                            // let tsUntil = (Date.now()/1000);
+                            let tsNow = (Date.now() / 1000);
+                            let sDiff = Math.round(tsUntil - tsNow);
+
+                            let hh = Math.floor(sDiff / 3600);
+                            let mm = Math.floor((sDiff - (hh * 3600)) / 60);
+                            let ss = sDiff - (hh * 3600) - (mm * 60);
+                            // hh = hh < 10 ? '0'+hh : hh;
+                            // mm = mm < 10 ? '0'+mm : mm;
+                            // ss = ss < 10 ? '0'+ss : ss;
+
+                            if (sDiff > 3599) {
+                                // timers[i].innerHTML = `${hh}h ${mm}m ${ss}s`;
+                                timers[i].innerHTML = `${hh}h`;
+                            }
+                            else if (sDiff > 59) {
+                                // timers[i].innerHTML = `${mm}m ${ss}s`;
+                                timers[i].innerHTML = `${mm}m`;
+                            }
+                            else if (sDiff > 0) {
+                                // timers[i].innerHTML = `${sDiff.toString()}s`;
+                                timers[i].innerHTML = `${ss}s`;
+                            }
+                            else {
+                                timers[i].innerHTML = 'Out!';
+                                // timers[i].parentElement.parentElement.style.backgroundColor = "rgba(10,250,10, 0.1)";
+                                timers[i].parentElement.parentElement.style.setProperty('background-color', 'rgba(10,250,10, 0.1)', 'important');
+                                timers[i].parentElement.nextSibling.childNodes[0].className = 'primary';
+                            }
+                        }
+                    }
+                } catch (e) {
+                    this.refreshTimersFailed++;
+                    if (this.refreshTimersFailed > 2) {
+                        this.stopTimers();
+                    }
+                }
+            }, 1000);
+        },
+        activateChainTimer() {
+            this.chainIntervalId = setInterval(() => {
+                try {
+                    console.log(`Updating chain timer`);
+                    
+                    let timer = document.querySelector('.chainTimer');
+                    let tsUntil = timer.getAttribute('data-timeout');
+
                     // let tsUntil = (Date.now()/1000);
                     let tsNow = (Date.now() / 1000);
                     let sDiff = Math.round(tsUntil - tsNow);
@@ -134,64 +184,30 @@ export default {
                     let hh = Math.floor(sDiff / 3600);
                     let mm = Math.floor((sDiff - (hh * 3600)) / 60);
                     let ss = sDiff - (hh * 3600) - (mm * 60);
-                    // hh = hh < 10 ? '0'+hh : hh;
-                    // mm = mm < 10 ? '0'+mm : mm;
-                    // ss = ss < 10 ? '0'+ss : ss;
 
-                    if (sDiff > 3599) {
-                        // timers[i].innerHTML = `${hh}h ${mm}m ${ss}s`;
-                        timers[i].innerHTML = `${hh}h`;
+                    if (sDiff > 179) {
+                        timer.classList = 'chainTimer success';
+                        timer.innerHTML = `${mm}m ${ss % 60}s`;
+                    } else if (sDiff > 119) {
+                        timer.classList = 'chainTimer warning';
+                        timer.innerHTML = `${mm}m ${ss % 60}s`;
+                    } else if (sDiff > 0) {
+                        timer.classList = 'chainTimer danger';
+                        timer.innerHTML = `${ss}s`;
+                    } else {
+                        timer.classList = 'chainTimer secondary';
+                        timer.innerHTML = 'Ended!';
+                        this.stopChainTimer();
+                        setTimeout(() => {
+                            this.showChainInfo();
+                        }, 1000);
                     }
-                    else if (sDiff > 59) {
-                        // timers[i].innerHTML = `${mm}m ${ss}s`;
-                        timers[i].innerHTML = `${mm}m`;
-                    }
-                    else if (sDiff > 0) {
-                        // timers[i].innerHTML = `${sDiff.toString()}s`;
-                        timers[i].innerHTML = `${ss}s`;
-                    }
-                    else {
-                        timers[i].innerHTML = 'Out!';
-                        // timers[i].parentElement.parentElement.style.backgroundColor = "rgba(10,250,10, 0.1)";
-                        timers[i].parentElement.parentElement.style.setProperty('background-color', 'rgba(10,250,10, 0.1)', 'important');
-                        timers[i].parentElement.nextSibling.childNodes[0].className = 'primary';
+                } catch (e) {
+                    this.refreshTimersFailed++;
+                    if (this.refreshTimersFailed > 2) {
+                        this.stopChainTimer();
                     }
                 }
-            }, 1000);
-        },
-        activateChainTimer() {
-            this.chainIntervalId = setInterval(() => {
-                console.log(`Updating chain timer`);
-                
-                let timer = document.querySelector('.chainTimer');
-                let tsUntil = timer.getAttribute('data-timeout');
-
-                // let tsUntil = (Date.now()/1000);
-                let tsNow = (Date.now() / 1000);
-                let sDiff = Math.round(tsUntil - tsNow);
-
-                let hh = Math.floor(sDiff / 3600);
-                let mm = Math.floor((sDiff - (hh * 3600)) / 60);
-                let ss = sDiff - (hh * 3600) - (mm * 60);
-
-                if (sDiff > 179) {
-                    timer.classList = 'chainTimer success';
-                    timer.innerHTML = `${mm}m ${ss % 60}s`;
-                } else if (sDiff > 119) {
-                    timer.classList = 'chainTimer warning';
-                    timer.innerHTML = `${mm}m ${ss % 60}s`;
-                } else if (sDiff > 0) {
-                    timer.classList = 'chainTimer danger';
-                    timer.innerHTML = `${ss}s`;
-                } else {
-                    timer.classList = 'chainTimer secondary';
-                    timer.innerHTML = 'Ended!';
-                    this.stopChainTimer();
-                    setTimeout(() => {
-                        this.showChainInfo();
-                    }, 1000);
-                }
-                
             }, 1000);
         },
 
@@ -457,6 +473,12 @@ export default {
         // Make sure we dont have any timers alrady running
         this.stopTimers();
         this.stopChainTimer();
+    },
+
+    onBeforeUnmount() {
+        console.log("Just about to destroy this shit");
+        this.stopTimers();
+        this.stopChainTimer();
     }
 }
 </script>
@@ -524,7 +546,7 @@ export default {
                         </td>
 
                         <td>
-                            <span :class="'th-bsp ' + getBsClass(data.bstats.battlestats || 0)">{{ $filters.shortenBs(data.bstats.battlestats || 0) }}</span>
+                            <span data-theme="dark" :class="'th-bsp ' + getBsClass(data.bstats.battlestats || 0)">{{ $filters.shortenBs(data.bstats.battlestats || 0) }}</span>
                         </td>
 
                         <td>
@@ -637,19 +659,19 @@ table tr:hover {
 }
 
 .th-danger {
-    border:1px solid red;
-    background:rgba(255,0,0,0.2);
+    /* border:1px solid darkred; */
+    background:tomato;
 }
 .th-warning {
-    border:1px solid orange;
-    background:rgba(255,200,100,0.2)
+    /* border:1px solid darkorange; */
+    background: sandybrown;
 }
 .th-success {
-    border:1px solid green;
-    background:rgba(0,255,0,0.2)
+    /* border:1px solid darkgreen; */
+    background:limegreen;
 }
 .th-secondary {
-    border:1px solid #999;
-    background:rgba(0, 0, 0, 0.2);
+    /* border:1px solid darkgray; */
+    background:lightgray;
 }
 </style>

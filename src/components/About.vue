@@ -46,6 +46,12 @@ export default {
             - Trades feature for showing trading history<br>
         </li>
 
+        <li><b>0.2.11 - 2025-04-xx</b><br>
+            - Several bugfixes and technical improvements<br>
+            - Battlestat prediction works in both dark + light mode<br>
+            - Add button to toggle between light and dark mode<br>
+        </li>
+
         <li><b>0.2.10 - 2025-04-14</b><br>
             - Chain timer on War page fully implemented<br>
             - Minor bugfixes and technical improvements<br>

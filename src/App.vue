@@ -78,6 +78,28 @@ export default {
                 localStorage.removeItem('log');
                 localStorage.removeItem('jobPoints');
             }
+        },
+        toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+
+            if (currentTheme === "dark") {
+                console.log("Switching to light mode!");
+                html.setAttribute('data-theme', 'light');
+            } else if (currentTheme === "light") {
+                console.log("Switching to dark mode!");
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                console.log("We have not explicitly set dark/light mode yet");
+                const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDarkMode) {
+                    console.log("System/browser is in dark mode - switching to light mode!");
+                    html.setAttribute('data-theme', 'light');
+                } else {
+                    console.log("System/browser is in light mode - switching to dark mode!");
+                    html.setAttribute('data-theme', 'dark');
+                }
+            }
         }
     },
     mounted() {
@@ -151,6 +173,12 @@ export default {
                 <li data-tooltip="War" data-placement="bottom">
                     <a href="#war" @click="setRouter('war')">
                         <i class="fa-solid fa-2x fa-skull-crossbones"></i>
+                    </a>
+                </li>
+                
+                <li data-tooltip="Toggle dark mode" data-placement="bottom">
+                    <a href="#" @click="toggleTheme">
+                        <i class="fa-solid fa-2x fa-moon"></i>
                     </a>
                 </li>
             </ul>
@@ -278,9 +306,23 @@ header nav#secondaryNav ul {
 
 header nav#secondaryNav ul li a {
     font-size: 1.2rem;
-    /*border:1px solid red;*/
-    /*padding:0;*/
 }
+
+#secondaryNav ul {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width:600px;
+  padding: 0;
+  margin: 0;
+  gap: 0rem;
+}
+
+#secondaryNav ul li:last-child {
+  margin-left: auto;
+}
+
 
 header nav ul li a:hover {
     color: #999;
