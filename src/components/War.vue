@@ -351,9 +351,16 @@ export default {
                     resolve(null);
                 }
 
+                /*fetch(`http://www.lol-manager.com/api/battlestats/${this.user.apiKey}/${userid}/9.3.2`, {
+                    mode: 'no-cors',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                })*/
                 fetch(`https://teknix.no/battlestats/${userid}/${this.user.apiKey}`)
                 .then(response => response.json())
                 .then(data => {
+                    //console.log(data);
                     if (data.hasOwnProperty('battlestats')) {
                         resolve(data);
                     } else {
