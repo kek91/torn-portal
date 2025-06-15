@@ -390,7 +390,7 @@ export default {
             /** Check if we have cached bstats */
             let bstats = JSON.parse(localStorage.getItem(`battlestats_${userid}`));
             if (bstats && bstats.hasOwnProperty('battlestats')) {
-                if (((Date.now() / 1000) - bstats.timestamp) > (60 * 60 * 24 * 30)) {
+                if (((Date.now() - bstats.timestamp) / 1000) > (60 * 60 * 24 * 30)) {
                     /** Old prediction is over a month old */
                     console.log('Old prediction is over a month old, fetching new prediction');
                     bstats = await this.generateBattlestats(userid);
