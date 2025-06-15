@@ -46,6 +46,10 @@ export default {
             - Trades feature for showing trading history<br>
         </li> -->
 
+        <li><b>0.2.13 - 2025-06-15</b><br>
+            - Fetch battlestat predictions with different source<br>
+        </li>
+
         <li><b>0.2.12 - 2025-04-16</b><br>
             - Implement trades feature<br>
             - Added debug info on dashboard<br>
