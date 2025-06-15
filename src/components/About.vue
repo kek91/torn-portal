@@ -40,11 +40,16 @@ export default {
 
 
     <h2>Changelog</h2>
+
     <ul>
 
         <!-- <li><b>In progress/Planned</b><br>
             - Trades feature for showing trading history<br>
         </li> -->
+
+        <li><b>0.2.14 - 2025-06-15</b><br>
+            - Fix bug in date comparison for locally cached battlestat prediction<br>
+        </li>
 
         <li><b>0.2.13 - 2025-06-15</b><br>
             - Fetch battlestat predictions with different source<br>
