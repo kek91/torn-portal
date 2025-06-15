@@ -357,7 +357,7 @@ export default {
                         "Content-Type": "application/json"
                     },
                 })*/
-                fetch(`https://teknix.no/battlestats/${userid}/${this.user.apiKey}`)
+                fetch(`https://teknix.no/bsp/${userid}/${this.user.apiKey}`)
                 .then(response => response.json())
                 .then(data => {
                     //console.log(data);
