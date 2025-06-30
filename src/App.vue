@@ -331,6 +331,8 @@ header nav ul li a:hover {
 
 main {
     padding: 20px;
+    max-width:1200px;
+    margin:0 auto;
 }
 
 footer {
