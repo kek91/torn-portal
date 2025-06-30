@@ -1,4 +1,5 @@
 <script>
+import { exampleWarData } from '../utils/exampleWarData';
 
 export default {
     name: 'War',
@@ -77,16 +78,23 @@ export default {
             console.log("Fetching war info for factionId: " + factionId);
             try {
                 this.toggleLoader(true);
-                const response = await fetch(`https://teknix.no/torn-portal/war/${factionId}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Authorization': `ApiKey ${this.user.apiKey}`
-                    }
-                });
-                const data = await response.json();
-                this.toggleLoader(false);
-                return data;
+                if (location.href.indexOf('localhost:5173') > -1) {
+                    console.log("Using example data for war info");
+                    this.toggleLoader(false);
+                    return exampleWarData();
+                } else {
+                    console.log("Fetching real war info from API");
+                    const response = await fetch(`https://teknix.no/torn-portal/war/${factionId}`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Authorization': `ApiKey ${this.user.apiKey}`
+                        }
+                    });
+                    const data = await response.json();
+                    this.toggleLoader(false);
+                    return data;
+                }
             } catch (e) {
                 this.$notify({
                     title: "API error",
