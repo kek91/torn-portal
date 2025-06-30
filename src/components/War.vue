@@ -108,23 +108,29 @@ export default {
 
         sortFactionMembersByHospTime(members) {
             return members.sort((a, b) => {
-                const aHospitalUntil = a.status.state === "Hospital" && a.status.until ? a.status.until : 0;
-                const bHospitalUntil = b.status.state === "Hospital" && b.status.until ? b.status.until : 0;
+                const aIsHospital = a.status.state === "Hospital";
+                const bIsHospital = b.status.state === "Hospital";
 
-                // 1. Primary sort: hospital time
-                if (bHospitalUntil !== aHospitalUntil) {
-                    return bHospitalUntil - aHospitalUntil;
+                const aUntil = aIsHospital ? Number(a.status.until) || Infinity : Infinity;
+                const bUntil = bIsHospital ? Number(b.status.until) || Infinity : Infinity;
+
+                // 1. Sort Hospital first
+                if (aIsHospital && !bIsHospital) return -1;
+                if (!aIsHospital && bIsHospital) return 1;
+
+                // 2. If both in Hospital, sort by until ascending
+                if (aIsHospital && bIsHospital) {
+                    return aUntil - bUntil;
                 }
 
-                // 2. Secondary sort: Traveling status
-                const aTravel = a.status.state === "Traveling" || a.status.state === "Abroad" ? 0 : 1;
-                const bTravel = b.status.state === "Traveling" || b.status.state === "Abroad" ? 0 : 1;
+                // 3. Sort Traveling/Abroad LAST
+                const aIsTravel = a.status.state === "Traveling" || a.status.state === "Abroad";
+                const bIsTravel = b.status.state === "Traveling" || b.status.state === "Abroad";
 
-                if (bTravel !== aTravel) {
-                    return bTravel - aTravel; // Traveling people first
-                }
+                if (aIsTravel && !bIsTravel) return 1;  // b (Okay) comes before a (Traveling)
+                if (!aIsTravel && bIsTravel) return -1; // a (Okay) comes before b (Traveling)
 
-                // 3. Tertiary sort: level (descending)
+                // 4. Sort by level (descending)
                 return b.level - a.level;
             });
         },
@@ -181,7 +187,7 @@ export default {
             this.chainIntervalId = setInterval(() => {
                 try {
                     console.log(`Updating chain timer`);
-                    
+
                     let timer = document.querySelector('.chainTimer');
                     let tsUntil = timer.getAttribute('data-timeout');
 
@@ -269,16 +275,16 @@ export default {
                     // });
 
                     // this.factionMembers = await Promise.all(promises);
-                    
+
                     if (data.status === "war") {
                         this.factionIdOpponent = data.factionIdOpponent;
                         this.factionNameOpponent = data.factionNameOpponent;
                         this.rwScoreMine = data.rwScoreMine;
                         this.rwScoreOpponent = data.rwScoreOpponent;
-                        el.innerHTML = `<span class="success">${this.factionNameMine} (${ this.$filters.toShortNumber(this.rwScoreMine) })</span> 
+                        el.innerHTML = `<span class="success">${this.factionNameMine} (${this.$filters.toShortNumber(this.rwScoreMine)})</span> 
                         vs 
                         <span class="danger">${this.factionNameOpponent} (${this.$filters.toShortNumber(this.rwScoreOpponent)})</span>`;
-                    } else {    
+                    } else {
                         el.innerHTML = `<span class="success">${this.factionNameMine}</span><br>Not currently in war`;
                     }
                     this.activateTimers();
@@ -293,7 +299,7 @@ export default {
                     });
                     this.toggleLoader(false);
                 });
-            } catch(e) {
+            } catch (e) {
                 console.error("Error occurred when getting war info: ", e);
             }
         },
@@ -318,7 +324,7 @@ export default {
                     if (data && data.chain && data.chain.current > 0) {
 
                         const chainReportUrl = `https://www.torn.com/war.php?step=chainreport&chainID=${data.chain.id}`;
-                        
+
                         if (data.chain.cooldown > 0) {
                             el.innerHTML = `Chain is in cooldown!<br>
                             ${data.chain.current}/${data.chain.max}<br>
@@ -329,8 +335,8 @@ export default {
 
                         el.innerHTML = `<span class="info">Chain active!</span><br>
                         ${data.chain.current}/${data.chain.max}<br>
-                        ${data.chain.max-data.chain.current} hits until bonus!<br>
-                        <b><span class="chainTimer" data-timeout="${data.chain.end}">${Math.floor(data.chain.timeout/60)}m ${Math.floor(data.chain.timeout % 60)}s</span></b>`;
+                        ${data.chain.max - data.chain.current} hits until bonus!<br>
+                        <b><span class="chainTimer" data-timeout="${data.chain.end}">${Math.floor(data.chain.timeout / 60)}m ${Math.floor(data.chain.timeout % 60)}s</span></b>`;
 
                         this.activateChainTimer();
 
@@ -366,25 +372,25 @@ export default {
                     },
                 })*/
                 fetch(`https://teknix.no/bsp/${userid}/${this.user.apiKey}`)
-                .then(response => response.json())
-                .then(data => {
-                    //console.log(data);
-                    if (data.hasOwnProperty('battlestats')) {
-                        resolve(data);
-                    } else {
+                    .then(response => response.json())
+                    .then(data => {
+                        //console.log(data);
+                        if (data.hasOwnProperty('battlestats')) {
+                            resolve(data);
+                        } else {
+                            resolve({
+                                "error": "API error from tornhelper-node",
+                                "timestamp": Date.now()
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
                         resolve({
                             "error": "API error from tornhelper-node",
                             "timestamp": Date.now()
                         });
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    resolve({
-                        "error": "API error from tornhelper-node",
-                        "timestamp": Date.now()
                     });
-                });
             });
         },
 
@@ -426,18 +432,18 @@ export default {
 
             if (!isNaN(numberPart)) {
                 switch (unitPart) {
-                case 'k':
-                    this.myBattlestats = numberPart * 1000;
-                    break;
-                case 'm':
-                    this.myBattlestats = numberPart * 1000000;
-                    break;
-                case 'b':
-                    this.myBattlestats = numberPart * 1000000000;
-                    break;
-                default:
-                    this.myBattlestats = numberPart;
-                    break;
+                    case 'k':
+                        this.myBattlestats = numberPart * 1000;
+                        break;
+                    case 'm':
+                        this.myBattlestats = numberPart * 1000000;
+                        break;
+                    case 'b':
+                        this.myBattlestats = numberPart * 1000000000;
+                        break;
+                    default:
+                        this.myBattlestats = numberPart;
+                        break;
                 }
             } else {
                 this.myBattlestats = null;
@@ -445,7 +451,7 @@ export default {
             this.saveMyBattlestats();
         },
         saveMyBattlestats() {
-            if(this.myBattlestats !== null) {
+            if (this.myBattlestats !== null) {
                 localStorage.setItem('myBattlestats', this.myBattlestats);
                 this.myBattleStatsResult = `<span class="success">Saved: <b>${this.$filters.toNumberFormat(this.myBattlestats)}</b></span>`;
             }
@@ -454,7 +460,7 @@ export default {
             try {
                 this.myBattlestats = (localStorage.getItem('myBattlestats') || 0);
                 this.myBattlestatsInput = this.$filters.shortenBs(this.myBattlestats);
-            } catch(e) {
+            } catch (e) {
                 console.error("Could not load myBattlestats");
             }
         },
@@ -479,7 +485,7 @@ export default {
 
         try {
             this.factionId = localStorage.getItem('hospitalTargetsFactionId');
-        } catch(e) {
+        } catch (e) {
             console.error("Could not set factionId from localstorage, probably not used this tool before");
         }
         this.loadMyBattlestats();
@@ -501,7 +507,7 @@ export default {
 <template>
 
     <h1><i class="fa-solid fa-skull-crossbones"></i> War</h1>
-    
+
     <div role="group">
         <button @click="showHospitalTargets">&#8635; Members</button>
         <button @click="showChainInfo">&#8635; Chain</button>
@@ -531,10 +537,10 @@ export default {
                         <td>
                             <a :href="'https://www.torn.com/profiles.php?XID=' + data.id" target="blank">
                                 <template v-if="this.windowWidth < 375">
-                                    {{ data.name.substring(0,6) }}
+                                    {{ data.name.substring(0, 6) }}
                                 </template>
                                 <template v-else-if="this.windowWidth < 420">
-                                    {{ data.name.substring(0,10) }}
+                                    {{ data.name.substring(0, 10) }}
                                 </template>
                                 <template v-else>
                                     {{ data.name }}
@@ -561,11 +567,13 @@ export default {
                         </td>
 
                         <td>
-                            <span data-theme="dark" :class="'th-bsp ' + getBsClass(data.bstats.battlestats || 0)">{{ $filters.shortenBs(data.bstats.battlestats || 0) }}</span>
+                            <span data-theme="dark" :class="'th-bsp ' + getBsClass(data.bstats.battlestats || 0)">{{
+                                $filters.shortenBs(data.bstats.battlestats || 0) }}</span>
                         </td>
 
                         <td>
-                            <span class="success" v-if="data.status.state === 'Okay'">{{ data.status.description }}</span>
+                            <span class="success" v-if="data.status.state === 'Okay'">{{ data.status.description
+                                }}</span>
                             <span class="info"
                                 v-else-if="data.status.state === 'Traveling' || data.status.state === 'Abroad'">
                                 <template v-if="this.windowWidth < 800">
@@ -575,7 +583,8 @@ export default {
                                     {{ data.status.description }}
                                 </template>
                             </span>
-                            <span class="secondary" v-else-if="data.status.state === 'Fallen'">{{ data.status.description
+                            <span class="secondary" v-else-if="data.status.state === 'Fallen'">{{
+                                data.status.description
                                 }}</span>
                             <span class="danger" v-else-if="data.status.state === 'Hospital'">Hosp</span>
                             <span class="danger" v-else-if="data.status.state === 'Jail'">Jail</span>
@@ -591,14 +600,14 @@ export default {
 
                         <td class="center">
                             <template v-if="data.status.state !== 'Okay'">
-                                <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data.id" target="blank"
-                                    class="secondary">
+                                <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data.id"
+                                    target="blank" class="secondary">
                                     <i class="fa-solid fa-gun fa-xl"></i>
                                 </a>
                             </template>
                             <template v-else>
-                                <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data.id" target="blank"
-                                    class="primary">
+                                <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + data.id"
+                                    target="blank" class="primary">
                                     <i class="fa-solid fa-gun fa-xl"></i>
                                 </a>
                             </template>
@@ -631,7 +640,8 @@ export default {
             then enter your battlestats in the field below.
         </p>
         <form @submit.prevent="saveMyBattlestats">
-            <input type="text" v-model="myBattlestatsInput" v-on:input="processMyBattlestats" placeholder="Enter number or shortcut (i.e. 50k, 200m, 1.2b)">
+            <input type="text" v-model="myBattlestatsInput" v-on:input="processMyBattlestats"
+                placeholder="Enter number or shortcut (i.e. 50k, 200m, 1.2b)">
             <span v-html="myBattleStatsResult" style="display:block;"></span>
         </form>
         <hr>
@@ -661,32 +671,36 @@ table td {
 table tr:hover {
     background: rgba(0, 0, 0, 0.05);
 }
+
 .th-bsp {
-    width:48px;
-    height:24px;
-    display:block;
-    font-size:0.8rem;
-    font-weight:bold;
-    line-height:24px;
-    text-align:center;
-    overflow:hidden;
-    color:#000 !important;
+    width: 48px;
+    height: 24px;
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+    line-height: 24px;
+    text-align: center;
+    overflow: hidden;
+    color: #000 !important;
 }
 
 .th-danger {
     /* border:1px solid darkred; */
-    background:tomato;
+    background: tomato;
 }
+
 .th-warning {
     /* border:1px solid darkorange; */
     background: sandybrown;
 }
+
 .th-success {
     /* border:1px solid darkgreen; */
-    background:limegreen;
+    background: limegreen;
 }
+
 .th-secondary {
     /* border:1px solid darkgray; */
-    background:lightgray;
+    background: lightgray;
 }
 </style>
