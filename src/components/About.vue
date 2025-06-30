@@ -47,6 +47,11 @@ export default {
             - Trades feature for showing trading history<br>
         </li> -->
 
+        <li><b>0.2.15 - 2025-06-30</b><br>
+            - Fix sorting correctly for hospitalized people on War page<br>
+            - Minor UI adjustment<br>
+        </li>
+
         <li><b>0.2.14 - 2025-06-15</b><br>
             - Fix bug in date comparison for locally cached battlestat prediction<br>
         </li>
