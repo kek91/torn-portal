@@ -168,8 +168,9 @@ export default {
                                 timers[i].innerHTML = `${ss}s`;
                             }
                             else {
+                                console.log(`Timer for player ${i} has ended`);
+                                timers[i].parentElement.parentElement.classList.add('tr-bg-out');
                                 timers[i].innerHTML = 'Out!';
-                                // timers[i].parentElement.parentElement.style.backgroundColor = "rgba(10,250,10, 0.1)";
                                 timers[i].parentElement.parentElement.style.setProperty('background-color', 'rgba(10,250,10, 0.1)', 'important');
                                 timers[i].parentElement.nextSibling.childNodes[0].className = 'primary';
                             }
@@ -702,5 +703,9 @@ table tr:hover {
 .th-secondary {
     /* border:1px solid darkgray; */
     background: lightgray;
+}
+
+.tr-bg-out > td {
+    background-color: rgba(100, 250, 100, 0.1) !important;
 }
 </style>
