@@ -41,92 +41,84 @@ export default {
 
     <h2>Changelog</h2>
 
-    <ul>
+    <pre>
+        
+        0.2.18 - 2025-07-01:
+        - Fix async bug in Trades feature where trades were not shown correctly after refreshing data
+        - Minor adjustments in changelog formatting
 
-        <!-- <li><b>In progress/Planned</b><br>
-            - Trades feature for showing trading history<br>
-        </li> -->
+        0.2.16 - 2025-07-01:
+        - Fix green background color on target row on War page when released out of hospital
+        
+        0.2.15 - 2025-06-30:
+        - Fix sorting correctly for hospitalized people on War page
+        - Minor UI adjustment
+        
+        0.2.14 - 2025-06-15:
+        - Fix bug in date comparison for locally cached battlestat prediction
 
-        <li><b>0.2.16 - 2025-07-01</b><br>
-            - Fix green background color on target row on War page when released out of hospital<br>
-        </li>
-        <li><b>0.2.15 - 2025-06-30</b><br>
-            - Fix sorting correctly for hospitalized people on War page<br>
-            - Minor UI adjustment<br>
-        </li>
+        0.2.13 - 2025-06-15:
+        - Fetch battlestat predictions with different source
 
-        <li><b>0.2.14 - 2025-06-15</b><br>
-            - Fix bug in date comparison for locally cached battlestat prediction<br>
-        </li>
+        0.2.12 - 2025-04-16:
+        - Implement trades feature
+        - Added debug info on dashboard
+        - Misc bugfixes/improvements
+        0.2.11:
+        - Several bugfixes and technical improvements
+        - Battlestat prediction works in both dark + light mode
+        - Add button to toggle between light and dark mode
 
-        <li><b>0.2.13 - 2025-06-15</b><br>
-            - Fetch battlestat predictions with different source<br>
-        </li>
+        0.2.10 - 2025-04-14:
+        - Chain timer on War page fully implemented
+        - Minor bugfixes and technical improvements
+        - Upgraded all dependencies
+        - Add battlestat prediction on War page
 
-        <li><b>0.2.12 - 2025-04-16</b><br>
-            - Implement trades feature<br>
-            - Added debug info on dashboard<br>
-            - Misc bugfixes/improvements<br>
-        </li>
+        0.2.9 - 2025-04-13:
+        - Some UI adjustment for nav menu
+        - API requests go through custom backend for incorporating BattleStatPredictor later on
+        - Avoid redundant network request when loading Dashboard
+        - WIP: Chain timer on War page
 
-        <li><b>0.2.11</b><br>
-            - Several bugfixes and technical improvements<br>
-            - Battlestat prediction works in both dark + light mode<br>
-            - Add button to toggle between light and dark mode<br>
-        </li>
+        0.2.8:
+        - Fix responsive tables for several tools
+        - Rename "Hospital Targets" to "War"
+        - Always fetch new data for Dashboard + Job Points features, and fallback to cached data if the request fails
+        - War feature completed
+        - Fix bug in attack icon link in War feature
+        - Misc minor bugfixes
 
-        <li><b>0.2.10 - 2025-04-14</b><br>
-            - Chain timer on War page fully implemented<br>
-            - Minor bugfixes and technical improvements<br>
-            - Upgraded all dependencies<br>
-            - Add battlestat prediction on War page<br>
-        </li>
+        0.2.7:
+        - Job Finder complete!
+        - Minor UI adjustments
+        - Show days in faction + current job on Dashboard
+        - [WIP] Made some progress on HospitalTargets
 
-        <li><b>0.2.9 - 2025-04-13</b><br>
-            - Some UI adjustment for nav menu<br>
-            - API requests go through custom backend for incorporating BattleStatPredictor later on<br>
-            - Avoid redundant network request when loading Dashboard<br>
-            - WIP: Chain timer on War page<br>
-        </li>
+        0.2.6:
+        - [WIP] Began working on "Job Finder" feature...
+        - Transactions table is responsive and shows horizontal scroller if necessary
+        - Minor UI adjustment navigation
 
-        <li><b>0.2.8</b><br>
-            - Fix responsive tables for several tools<br>
-            - Rename "Hospital Targets" to "War"<br>
-            - Always fetch new data for Dashboard + Job Points features, and fallback to cached data if the request fails<br>
-            - War feature completed<br>
-            - Fix bug in attack icon link in War feature<br>
-            - Misc minor bugfixes<br>
-        </li>
-        <li><b>0.2.7</b><br>
-            - Job Finder complete!<br>
-            - Minor UI adjustments<br>
-            - Show days in faction + current job on Dashboard<br>
-            - [WIP] Made some progress on HospitalTargets<br>
-        </li>
-        <li><b>0.2.6</b><br>
-            - [WIP] Began working on "Job Finder" feature...<br>
-            - Transactions table is responsive and shows horizontal scroller if necessary<br>
-            - Minor UI adjustment navigation<br>
-        </li>
-        <li><b>0.2.5</b><br>
-        - Implemented "Job Points" feature<br>
-        - Renamed "Money Log" to "Transactions"<br>
-        - Added secondary navigation for all the tools<br>
-        - [WIP] Began working on "Hospital Targets" feature...<br>
-        </li>
-        <li><b>0.2.4</b><br>
-            - Implemented the Money feature<br>
-            - Implemented the Casino Watcher feature<br>
-            - Adapted error handler for authentication because Torn API returns 200 for incorrect API key instead of 401 Unauthorized which would be more fitting<br>
-            - Fix potential null point exception when fetching data<br>
-            - Misc layout adjustments<br>
-            - Add temporary favicon
-        </li>
-        <li><b>0.1.0</b><br>
-            - Initial release<br>
-            - Automatic build & deploy to netlify
-        </li>
-    </ul>
+        0.2.5:
+        - Implemented "Job Points" feature
+        - Renamed "Money Log" to "Transactions"
+        - Added secondary navigation for all the tools
+        - [WIP] Began working on "Hospital Targets" feature...
+
+        0.2.4:
+        - Implemented the Money feature
+        - Implemented the Casino Watcher feature
+        - Adapted error handler for authentication because Torn API returns 200 for incorrect API key instead of 401 Unauthorized which would be more fitting
+        - Fix potential null point exception when fetching data
+        - Misc layout adjustments
+        - Add temporary favicon
+
+        0.1.0:
+        - Initial release
+        - Automatic build & deploy to netlify
+    </pre>
+
     <p>
         Versioning explanation <small>(Major.Minor.Patch)</small><br>
         Major: New major overhauls or breaking features<br>

@@ -141,7 +141,7 @@ export default {
 
         refreshData(days) {
             console.log("Refreshing data...");
-            this.fetchLog(days).then((log) => {
+            this.fetchLog(days).then( async (log) => {
                 if (log != null) {
                     console.log("Fetched log from Torn API! Saving to localStorage");
                     localStorage.setItem('trades', JSON.stringify(log));
@@ -149,7 +149,7 @@ export default {
                      * all trades with id log=4482 means items added by someone else
                      * all entries with id log=4442 means money added by you
                      */
-                    this.log = this.summarizeLog(log);
+                    this.log = await this.summarizeLog(log);
                     console.log(this.log);
                 } else {
                     console.warn("Log is empty... API troubles?");
@@ -190,7 +190,7 @@ export default {
     <h1><i class="fa-solid fa-chart-simple"></i> Trades</h1>
 
 
-    <article id="sectionMoney" v-if="log != null">
+    <article id="sectionMoney" v-if="log != null && log.hasOwnProperty('trades')">
         <p>Stats from your last <b>{{ $filters.toNumberFormat(log.trades.length) }}</b> trades.</p>
         <figure>
             <table>
