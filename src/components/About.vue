@@ -47,6 +47,9 @@ export default {
             - Trades feature for showing trading history<br>
         </li> -->
 
+        <li><b>0.2.16 - 2025-07-01</b><br>
+            - Fix green background color on target row on War page when released out of hospital<br>
+        </li>
         <li><b>0.2.15 - 2025-06-30</b><br>
             - Fix sorting correctly for hospitalized people on War page<br>
             - Minor UI adjustment<br>
