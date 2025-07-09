@@ -122,6 +122,11 @@ export default {
 
     <a href="#" id="btnFetchProfile" role="button" @click="fetchProfile">Refresh</a>
 
+    <button type="submit" aria-label="Example button" onclick="event.preventDefault()">Test</button>
+
+    <button class="primary">Test Button</button>
+
+
     <article class="debuginfo">
 
         <p><b>Debug info</b></p>
