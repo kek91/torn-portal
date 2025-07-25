@@ -42,6 +42,9 @@ export default {
     <h2>Changelog</h2>
 
     <pre>
+
+        0.2.19 - 2025-07-25:
+        - Fixed minor bug for BSP because it didnt have space to fit 4 characters
         
         0.2.18 - 2025-07-01:
         - Fix async bug in Trades feature where trades were not shown correctly after refreshing data
