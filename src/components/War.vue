@@ -678,7 +678,7 @@ table tr:hover {
     height: 24px;
     display: block;
     font-size: 0.8rem;
-    font-weight: bold;
+    font-weight: normal;
     line-height: 24px;
     text-align: center;
     overflow: hidden;
