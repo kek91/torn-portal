@@ -267,7 +267,7 @@ header nav#secondaryNav {
     margin: 0px 10px;
     padding-top: 5px;
     height: 60px;
-    border-top: 1px solid #1b588c;
+    border-top: 1px solid #843915;
 }
 
 header nav ul li a {

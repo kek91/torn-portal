@@ -6,6 +6,7 @@
   --pico-primary-underline:var(--pico-primary) !important;
   --pico-primary-hover-underline:var(--pico-primary-hover) !important;
   --pico-primary-focus: rgba(0, 0, 0, 0.3) !important;
+  .v3ti-tag { background: #843915 !important; }
 }
 
 @media only screen and (prefers-color-scheme: dark) {
@@ -17,5 +18,6 @@
         --pico-primary-underline:var(--pico-primary) !important;
         --pico-primary-hover-underline:var(--pico-primary-hover) !important;
         --pico-primary-focus: rgba(0, 0, 0, 0.3) !important;
+        .v3ti-tag { background: #843915 !important; }
     }
 }   
