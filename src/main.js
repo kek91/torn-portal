@@ -40,6 +40,24 @@ app.config.globalProperties.$filters = {
         } else {
             return `< 1K`;
         }
+    },
+    colorForBsp(myStats, enemyStats) {
+        const diff = ((enemyStats / myStats) * 100);
+        if (diff < 5) {
+            return "th-difficulty-0"; // gray
+        } else if (diff < 30) {
+            return "th-difficulty-1"; // turquoise
+        } else if (diff < 100) {
+            return "th-difficulty-2"; // green
+        } else if (diff < 110) {
+            return "th-difficulty-3"; // yellow
+        } else if (diff < 120) {
+            return "th-difficulty-4"; // orange
+        } else if (diff < 150) {
+            return "th-difficulty-5"; // lightred
+        } else {
+            return "th-difficulty-6"; // darkred
+        }
     }
 };
 
