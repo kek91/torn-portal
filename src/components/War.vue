@@ -377,7 +377,12 @@ export default {
                     .then(data => {
                         //console.log(data);
                         if (data.hasOwnProperty('battlestats')) {
-                            resolve(data);
+                            // resolve(data);
+                            /* Use local timestamp incase server uses old data */
+                            resolve({
+                                "battlestats": data.battlestats,
+                                "timestamp": Date.now()
+                            });
                         } else {
                             resolve({
                                 "error": "API error from tornhelper-node",
@@ -708,4 +713,21 @@ table tr:hover {
 .tr-bg-out > td {
     background-color: rgba(100, 250, 100, 0.1) !important;
 }
+
+.th-difficulty-0 { background: #999999; }
+.th-difficulty-1 { background: #c8facc; }
+.th-difficulty-2 { background: #bbf451; }
+.th-difficulty-3 { background: #ffe864; }
+.th-difficulty-4 { background: #ffb76a; }
+.th-difficulty-5 { background: #ff7a7a; }
+.th-difficulty-6 { background: #ff4b4b; }
+
+.th-difficulty-0:hover { background: #99999999; }
+.th-difficulty-1:hover { background: #c8facc99; }
+.th-difficulty-2:hover { background: #bbf45199; }
+.th-difficulty-3:hover { background: #ffe86499; }
+.th-difficulty-4:hover { background: #ffb76a99; }
+.th-difficulty-5:hover { background: #ff7a7a99; }
+.th-difficulty-6:hover { background: #ff4b4b99; }
+
 </style>
