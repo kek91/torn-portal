@@ -64,7 +64,7 @@ export default {
         <p>Please enter your Torn API key</p>
 
         <form @submit="verifyKey">
-            <input type="text" id="inputApiKey" placeholder="API key..." class="form-control">
+            <input type="text" id="inputApiKey" placeholder="API key..." class="form-control" required>
             <button type="submit" id="btnSubmitApiKey">Login</button>
         </form>
         <a href="https://www.torn.com/preferences.php#tab=api?&step=addNewKey&title=Torn%20Portal&type=4" target="blank" role="button" class="outline">Create API key</a>
