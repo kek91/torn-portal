@@ -573,7 +573,7 @@ export default {
                         </td>
 
                         <td>
-                            <span data-theme="dark" :class="'th-bsp ' + getBsClass(data.bstats.battlestats || 0)">{{
+                            <span data-theme="dark" :class="'th-bsp ' + $filters.colorForBsp(this.myBattlestats, data.bstats.battlestats || 0)">{{
                                 $filters.shortenBs(data.bstats.battlestats || 0) }}</span>
                         </td>
 
@@ -653,10 +653,14 @@ export default {
         <hr>
         <p>
             Color legend:<br>
-            <span class="th-bsp th-danger" style="width:100%;"> Strong: More than 100% of your stats </span>
-            <span class="th-bsp th-warning" style="width:100%;"> Fair: Up to 100% of your stats </span>
-            <span class="th-bsp th-success" style="width:100%;"> Easy: Up to 80% of your stats</span>
-            <span class="th-bsp th-secondary" style="width:100%;"> Weak: Less than 60% of your stats</span>
+            <span class="th-bsp th-difficulty-0" style="width:100%;"> Less than 5% of your TBS</span>
+            <span class="th-bsp th-difficulty-1" style="width:100%;"> Less than 30% of your TBS</span>
+            <span class="th-bsp th-difficulty-2" style="width:100%;"> Less than 100% of your TBS </span>
+            <span class="th-bsp th-difficulty-3" style="width:100%;"> Upto 10% more than your TBS</span>
+            <span class="th-bsp th-difficulty-4" style="width:100%;"> Upto 20% more than your TBS</span>
+            <span class="th-bsp th-difficulty-5" style="width:100%;"> Upto 50% more than your TBS</span>
+            <span class="th-bsp th-difficulty-6" style="width:100%;"> More than 50% of your TBS</span>
+            
         </p>
     </article>
 
