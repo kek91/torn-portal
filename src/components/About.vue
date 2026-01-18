@@ -43,6 +43,11 @@ export default {
 
     <pre>
 
+        0.3.0 - xx:
+        - Change colors for BSP difficulty levels
+        - Add local caching for BSP if remote server is outdated
+        - Minor bugfixes and improvements
+
         0.2.19 - 2025-07-25:
         - Fixed minor bug for BSP because it didnt have space to fit 4 characters
         
