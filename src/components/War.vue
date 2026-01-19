@@ -11,6 +11,10 @@ export default {
         profile: {
             type: Object,
             required: true
+        },
+        isDev: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -78,7 +82,7 @@ export default {
             console.log("Fetching war info for factionId: " + factionId);
             try {
                 this.toggleLoader(true);
-                if (location.href.indexOf('localhost') !== -1) {
+                if (this.isDev) {
                     console.log("Using example data for war info");
                     this.toggleLoader(false);
                     return exampleWarData();
