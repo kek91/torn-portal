@@ -43,7 +43,8 @@ export default {
 
     <pre>
 
-        0.3.0 - xx:
+        0.3.0 - 2026-01-20:
+        - Add new Retal feature on War page - shows potential retalliation targets based on incoming attacks within last 5 minutes
         - Change colors for BSP difficulty levels
         - Add local caching for BSP if remote server is outdated
         - Minor bugfixes and improvements
