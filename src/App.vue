@@ -35,7 +35,8 @@ export default {
             appVersion: version,
             router: 'dashboard',
             casinoWatcher: null,
-            casinoWatcherData: null
+            casinoWatcherData: null,
+            isDev: (window.location.hostname.indexOf("localhost") !== -1)
         }
     },
     methods: {
@@ -144,12 +145,12 @@ export default {
                         <i class="fa-solid fa-2x fa-house"></i>
                     </a>
                 </li>
-                <li data-tooltip="Transactions" data-placement="bottom">
+                <li data-tooltip="Transactions" data-placement="bottom" v-if="isDev">
                     <a href="#transactions" @click="setRouter('transactions')">
                         <i class="fa-solid fa-2x fa-money-bill"></i>
                     </a>
                 </li>
-                <li data-tooltip="Trade statistics" data-placement="bottom">
+                <li data-tooltip="Trade statistics" data-placement="bottom" v-if="isDev">
                     <a href="#trades" @click="setRouter('trades')">
                         <i class="fa-solid fa-2x fa-arrow-right-arrow-left"></i>
                     </a>
@@ -234,6 +235,7 @@ export default {
                     v-else-if="router === 'war'"
                     :user="user"
                     :profile="profile"
+                    :isDev="isDev"
             ></War>
             <Error404 v-else></Error404>
         </div>
@@ -380,6 +382,12 @@ h3 {
 .info {
     color: dodgerblue;
 }
+
+.bg-success { background-color: #d4edda; }
+.bg-danger { background-color: #f8d7da; }
+.bg-warning { background-color: #fff3cd; }
+.bg-info { background-color: #d1ecf1; }
+
 
 .centered, .center {
     text-align: center;
