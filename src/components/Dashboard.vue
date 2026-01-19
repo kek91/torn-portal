@@ -103,6 +103,9 @@ export default {
 <!--    </div>-->
 
     <article id="sectionDashboard" v-if="profile != null">
+        <div class="center">
+            <img :src="profile.profile_image" alt="Profile image" class="profileImage">
+        </div>
         <table>
             <tr><td>Name</td><td><a :href="`https://www.torn.com/profiles.php?XID=${user.id}`" target="_blank">{{ user.name }} [{{ user.id }}]</a></td></tr>
             <tr><td>Rank</td><td>{{ profile.rank }}</td></tr>
@@ -147,5 +150,13 @@ code {
 article.debuginfo {
     margin-top:30px;
     color:#999;
+}
+.profileImage {
+    border-radius:10px;
+    width:200px;
+    max-width:90%;
+    margin:10px auto;
+    background-position: center;
+    background-size: cover;
 }
 </style>
