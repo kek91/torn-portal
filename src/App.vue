@@ -36,7 +36,8 @@ export default {
             router: 'dashboard',
             casinoWatcher: null,
             casinoWatcherData: null,
-            isDev: (window.location.hostname.indexOf("localhost") !== -1)
+            // isDev: (window.location.hostname.indexOf("localhost") !== -1)
+            isDev: false
         }
     },
     methods: {
