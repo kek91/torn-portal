@@ -59,36 +59,39 @@ export default {
 
         async checkIncomingAttacks() {
 
-            let element = document.getElementById('retals-content');
-
             try {
-                element.setAttribute('aria-busy', 'true');
+                let element = document.getElementById('retals-content');
+                try {
+                    element.setAttribute('aria-busy', 'true');
 
-                const url = `https://api.torn.com/v2/faction/attacks?filters=incoming&limit=10&sort=DESC&comment=TornPortal`;
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `ApiKey ${this.user.apiKey}`
+                    const url = `https://api.torn.com/v2/faction/attacks?filters=incoming&limit=10&sort=DESC&comment=TornPortal`;
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `ApiKey ${this.user.apiKey}`
+                    }
+                    const responsedata = await fetchFromTornViaProxy(url, headers);
+                    
+                    console.log(responsedata);
+
+                    // Store all attacks and filter valid retals
+                    this.attacks = responsedata.attacks || [];
+                    this.validRetals = this.filterValidRetals(this.attacks);
+                    this.lastChecked = Date.now();
+
+                    element.setAttribute('aria-busy', 'false');
+
+                } catch (e) {
+
+                    this.$notify({
+                        title: "Torn API error",
+                        text: `${e}`,
+                        type: "error"
+                    });
+                    element.setAttribute('aria-busy', 'false');
                 }
-                const responsedata = await fetchFromTornViaProxy(url, headers);
-                
-                console.log(responsedata);
-
-                // Store all attacks and filter valid retals
-                this.attacks = responsedata.attacks || [];
-                this.validRetals = this.filterValidRetals(this.attacks);
-                this.lastChecked = Date.now();
-
-                element.setAttribute('aria-busy', 'false');
-
             } catch (e) {
-
-                this.$notify({
-                    title: "Torn API error",
-                    text: `${e}`,
-                    type: "error"
-                });
-                element.setAttribute('aria-busy', 'false');
+                // swallow exception
             }
             return null;
         },
@@ -112,9 +115,11 @@ export default {
     onBeforeUnmount() {
         if (this.intervalId) {
             clearInterval(this.intervalId);
+            this.intervalId = null;
         }
         if (this.intervalId2) {
             clearInterval(this.intervalId2);
+            this.intervalId2 = null;
         }
     }
 }
