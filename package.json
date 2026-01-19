@@ -6,7 +6,7 @@
     "dev": "vite",
     "serve": "vite",
     "build": "vite build",
-    "postbuild": "curl -H \"Content-Type: application/json\" -X POST -d \"{\\\"content\\\": \\\"✅ Torn Portal version $(jq -r .version package.json) successfully deployed to https://torn-portal.netlify.app\\n🔨 Commit: $(git log -1 --pretty=%s)\\\"}\" \"$DISCORD_WEBHOOK_URL\""
+    "postbuild": "curl -H 'Content-Type: application/json' -X POST -d '{\"content\": \"✅ Torn Portal version '\"$(jq -r .version package.json)\"' successfully deployed to https://torn-portal.netlify.app\\n🔨 Commit: '\"$(git log -1 --pretty=%s)\"'\"}' \"$DISCORD_WEBHOOK_URL\""
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^3.4.1",
