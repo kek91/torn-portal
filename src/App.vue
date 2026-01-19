@@ -9,6 +9,7 @@ import Error404 from "@/components/Error404.vue";
 import JobPoints from "@/components/JobPoints.vue";
 import JobFinder from "@/components/JobFinder.vue";
 import War from "@/components/War.vue";
+import Retals from "@/components/Retals.vue";
 import {useNotification} from "@kyvg/vue3-notification";
 import {version} from '../package.json'
 
@@ -27,6 +28,7 @@ export default {
         JobPoints,
         JobFinder,
         War,
+        Retals,
     },
     data() {
         return {
@@ -232,12 +234,18 @@ export default {
                     v-else-if="router === 'jobfinder'"
                     :user="user"
             ></JobFinder>
-            <War
-                    v-else-if="router === 'war'"
-                    :user="user"
-                    :profile="profile"
-                    :isDev="isDev"
-            ></War>
+            <div v-else-if="router === 'war'">
+                <Retals
+                        :user="user"
+                        :profile="profile"
+                        :isDev="isDev"
+                ></Retals>
+                <War
+                        :user="user"
+                        :profile="profile"
+                        :isDev="isDev"
+                ></War>
+            </div>
             <Error404 v-else></Error404>
         </div>
 
