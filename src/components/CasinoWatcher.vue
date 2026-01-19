@@ -173,6 +173,10 @@ export default {
 
     <article id="sectionCasinoWatcher" v-else>
 
+        <p class="danger">Warning: This is no longer useful because Torn has implemented API 
+            caching on this endpoint making this tool ineffective.
+        </p>
+
         <p><small>
             The Casino Watcher will notify you when a user has requested a casino token refill.<br>
             This MAY indicate the user has lots of money on hand... you figure out the rest :)<br><br>
