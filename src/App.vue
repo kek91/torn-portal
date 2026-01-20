@@ -5,6 +5,7 @@ import Transactions from "@/components/Transactions.vue";
 import Trades from "@/components/Trades.vue";
 import About from "@/components/About.vue";
 import CasinoWatcher from "@/components/CasinoWatcher.vue";
+import MarketWatcher from "@/components/MarketWatcher.vue";
 import Error404 from "@/components/Error404.vue";
 import JobPoints from "@/components/JobPoints.vue";
 import JobFinder from "@/components/JobFinder.vue";
@@ -24,6 +25,7 @@ export default {
         Trades,
         About,
         CasinoWatcher,
+        MarketWatcher,
         Error404,
         JobPoints,
         JobFinder,
@@ -38,6 +40,8 @@ export default {
             router: 'dashboard',
             casinoWatcher: null,
             casinoWatcherData: null,
+            marketWatcher: null,
+            marketWatcherData: null,
             // isDev: (window.location.hostname.indexOf("localhost") !== -1)
             isDev: false
         }
@@ -58,6 +62,7 @@ export default {
             console.log('this.router = ' + page);
             this.router = page;
         },
+
         setCasinoWatcher(intervalid) {
             this.casinoWatcher = intervalid;
         },
@@ -73,6 +78,23 @@ export default {
         updateCasinoWatcher(users) {
             this.casinoWatcherData.users = users;
         },
+
+        setMarketWatcher(intervalid) {
+            this.marketWatcher = intervalid;
+        },
+        setMarketWatcherData(data) {
+            this.marketWatcherData = data;
+        },
+        clearMarketWatcher() {
+            this.marketWatcher = null;
+        },
+        clearMarketWatcherData() {
+            this.marketWatcherData = null;
+        },
+        updateMarketWatcher(items) {
+            this.marketWatcherData.items = items;
+        },
+
         logout() {
             let confirmation = confirm("Are you sure you wish to log out?");
             if (confirmation) {
@@ -174,6 +196,12 @@ export default {
                         <i class="fa-brands fa-2x fa-watchman-monitoring" :class="casinoWatcher != null ? 'danger' : ''"></i>
                     </a>
                 </li>
+                <li :data-tooltip="marketWatcher != null ? 'Market Watcher (ACTIVE)' : 'Market Watcher'"
+                    data-placement="bottom">
+                    <a href="#marketwatcher" @click="setRouter('marketwatcher')">
+                        <i class="fa fa-2x fa-shopping-cart" :class="marketWatcher != null ? 'danger' : ''"></i>
+                    </a>
+                </li>
                 <li data-tooltip="War" data-placement="bottom">
                     <a href="#war" @click="setRouter('war')">
                         <i class="fa-solid fa-2x fa-skull-crossbones"></i>
@@ -226,6 +254,17 @@ export default {
                     @clearCasinoWatcherData="clearCasinoWatcherData"
                     @updateCasinoWatcher="updateCasinoWatcher"
             ></CasinoWatcher>
+            <MarketWatcher
+                    v-else-if="router === 'marketwatcher'"
+                    :user="user"
+                    :marketWatcher="marketWatcher"
+                    :marketWatcherData="marketWatcherData"
+                    @setMarketWatcher="setMarketWatcher"
+                    @setMarketWatcherData="setMarketWatcherData"
+                    @clearMarketWatcher="clearMarketWatcher"
+                    @clearMarketWatcherData="clearMarketWatcherData"
+                    @updateMarketWatcher="updateMarketWatcher"
+            ></MarketWatcher>
             <JobPoints
                     v-else-if="router === 'jobpoints'"
                     :user="user"

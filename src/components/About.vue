@@ -43,6 +43,12 @@ export default {
 
     <pre>
 
+        0.4.x - xxxx-xx-xx:
+        - New feature: Market Watcher - monitor market listings for specific items and get notified when new listings appear
+        
+        0.3.1 - 2026-01-20:
+        - Hotfix minor bug in Retal feature
+
         0.3.0 - 2026-01-20:
         - Add new Retal feature on War page - shows potential retalliation targets based on incoming attacks within last 5 minutes
         - Change colors for BSP difficulty levels
