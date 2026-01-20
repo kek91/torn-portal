@@ -167,44 +167,43 @@ export default {
             <ul>
                 <li data-tooltip="Dashboard" data-placement="bottom">
                     <a href="#dashboard" @click="setRouter('dashboard')">
-                        <i class="fa-solid fa-2x fa-house"></i>
+                        <i class="fa-solid fa-2x fa-house" :class="router === 'dashboard' ? 'primary' : ''"></i>
                     </a>
                 </li>
                 <li data-tooltip="Transactions" data-placement="bottom" v-if="isDev">
                     <a href="#transactions" @click="setRouter('transactions')">
-                        <i class="fa-solid fa-2x fa-money-bill"></i>
+                        <i class="fa-solid fa-2x fa-money-bill" :class="router === 'transactions' ? 'primary' : ''"></i>
                     </a>
                 </li>
                 <li data-tooltip="Trade statistics" data-placement="bottom" v-if="isDev">
                     <a href="#trades" @click="setRouter('trades')">
-                        <i class="fa-solid fa-2x fa-arrow-right-arrow-left"></i>
+                        <i class="fa-solid fa-2x fa-arrow-right-arrow-left" :class="router === 'trades' ? 'primary' : ''"></i>
                     </a>
                 </li>
                 <li data-tooltip="Job Points" data-placement="bottom">
                     <a href="#jobpoints" @click="setRouter('jobpoints')">
-                        <i class="fa-solid fa-2x fa-suitcase"></i>
+                        <i class="fa-solid fa-2x fa-suitcase" :class="router === 'jobpoints' ? 'primary' : ''"></i>
                     </a>
                 </li>
                 <li data-tooltip="Job Finder" data-placement="bottom">
                     <a href="#jobfinder" @click="setRouter('jobfinder')">
-                        <i class="fa-solid fa-2x fa-magnifying-glass-dollar"></i>
+                        <i class="fa-solid fa-2x fa-magnifying-glass-dollar" :class="router === 'jobfinder' ? 'primary' : ''"></i>
                     </a>
                 </li>
                 <li :data-tooltip="casinoWatcher != null ? 'Casino Watcher (ACTIVE)' : 'Casino Watcher'"
-                    data-placement="bottom">
+                    data-placement="bottom" v-if="isDev">
                     <a href="#casinowatcher" @click="setRouter('casinowatcher')">
                         <i class="fa-brands fa-2x fa-watchman-monitoring" :class="casinoWatcher != null ? 'danger' : ''"></i>
                     </a>
                 </li>
-                <li :data-tooltip="marketWatcher != null ? 'Market Watcher (ACTIVE)' : 'Market Watcher'"
-                    data-placement="bottom">
+                <li data-tooltip="Market Watcher" data-placement="bottom">
                     <a href="#marketwatcher" @click="setRouter('marketwatcher')">
-                        <i class="fa fa-2x fa-shopping-cart" :class="marketWatcher != null ? 'danger' : ''"></i>
+                        <i class="fa fa-2x fa-shopping-cart" :class="router === 'marketwatcher' ? 'primary' : ''"></i>
                     </a>
                 </li>
                 <li data-tooltip="War" data-placement="bottom">
                     <a href="#war" @click="setRouter('war')">
-                        <i class="fa-solid fa-2x fa-skull-crossbones"></i>
+                        <i class="fa-solid fa-2x fa-skull-crossbones" :class="router === 'war' ? 'primary' : ''"></i>
                     </a>
                 </li>
                 
@@ -257,13 +256,6 @@ export default {
             <MarketWatcher
                     v-else-if="router === 'marketwatcher'"
                     :user="user"
-                    :marketWatcher="marketWatcher"
-                    :marketWatcherData="marketWatcherData"
-                    @setMarketWatcher="setMarketWatcher"
-                    @setMarketWatcherData="setMarketWatcherData"
-                    @clearMarketWatcher="clearMarketWatcher"
-                    @clearMarketWatcherData="clearMarketWatcherData"
-                    @updateMarketWatcher="updateMarketWatcher"
             ></MarketWatcher>
             <JobPoints
                     v-else-if="router === 'jobpoints'"
@@ -413,6 +405,10 @@ h3 {
     font-weight: 400;
     margin: 2px 0px;
     padding: 0px;
+}
+
+.primary {
+    color: #1e88e5;
 }
 
 .success {
