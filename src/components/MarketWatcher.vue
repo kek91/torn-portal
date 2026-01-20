@@ -8,14 +8,6 @@ export default {
         user: {
             type: Object,
             required: true
-        },
-        marketWatcher: {
-            type: Number,
-            required: false
-        },
-        marketWatcherData: {
-            type: Object,
-            required: false
         }
     },
     data() {
@@ -24,17 +16,12 @@ export default {
             itemIds: '',
             tags: [],
             lastPolled: (Date.now()/1000),
-            intervalId: null,
-            intervalId2: null,
+            watcherIntervalId: null,
+            timerIntervalId: null,
+            items: {},
+            isWatching: false,
         }
     },
-    emits: [
-        "setMarketWatcher",
-        "setMarketWatcherData",
-        "clearMarketWatcher",
-        "clearMarketWatcherData",
-        "updateMarketWatcher"
-    ],
     methods: {
         cacheInterval(e) {
             localStorage.setItem('marketWatcherInterval', e.target.value);
@@ -56,24 +43,17 @@ export default {
 
 
             let interval = Math.max(this.interval, 5) * 1000;
-            let intervalId = setInterval(this.pollMarketWatcher, interval, this.tags);
-            let marketWatcherData = {
-                tags: this.tags,
-                interval: interval,
-                intervalId: intervalId,
-            }
+            this.watcherIntervalId = setInterval(this.pollMarketWatcher, interval, this.tags);
+            this.pollMarketWatcher(this.tags); // Initial immediate poll
 
             this.lastPolled = (Date.now()/1000);
-
-            this.$emit('setMarketWatcher', intervalId);
-            this.$emit('setMarketWatcherData', marketWatcherData);
-
+            this.isWatching = true;
             this.updateLastPolledCounter();
         },
         pollMarketWatcher(items) {
             items.forEach(item => {
 
-                const url = `https://api.torn.com/v2/market/${item}/itemmarket?limit=10&offset=0&comment=TornHelper`;
+                const url = `https://api.torn.com/v2/market/${item}/itemmarket?limit=5&offset=0&comment=TornHelper`;
                 const headers = {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -81,19 +61,34 @@ export default {
                 }
                 fetchFromTornViaProxy(url, headers).then( (responsedata) => {
                     console.log(responsedata);
+                    if (responsedata.itemmarket) {
+                        const itemData = responsedata.itemmarket;
+                        this.items[itemData.item.id] = {
+                            name: itemData.item.name,
+                            type: itemData.item.type,
+                            average_price: itemData.item.average_price,
+                            listings: itemData.listings
+                        };
+                    }
                     this.lastPolled = Date.now()/1000;
-                    this.$emit('updateMarketWatcher', items);
                 });
             });
         },
         stopMarketWatcher(e) {
-            e.preventDefault();
+            try {
+            if(e) { e.preventDefault(); }
             console.log("Stopping market watcher");
-            clearInterval(this.marketWatcher);
-            this.$emit('clearMarketWatcher');
+            clearInterval(this.timerIntervalId);
+            this.timerIntervalId = null;
+            this.isWatching = false;
+            clearInterval(this.watcherIntervalId);
+            this.watcherIntervalId = null;
+            } catch(err) {
+                console.error("Error stopping market watcher:", err);
+            }
         },
         updateLastPolledCounter() {
-            setInterval(() => {
+            this.timerIntervalId = setInterval(() => {
                 let pollCounter = document.getElementById('pollCounter');
                 if(pollCounter) {
                     pollCounter.innerHTML = Math.round((Date.now() / 1000) - this.lastPolled);
@@ -113,6 +108,10 @@ export default {
         if (localStorage.getItem('marketWatcherInterval') != null) {
             this.interval = localStorage.getItem('marketWatcherInterval');
         }
+    },
+    unmounted() {
+        // Clean up intervals when component is unmounted
+        this.stopMarketWatcher();
     }
 }
 </script>
@@ -121,48 +120,51 @@ export default {
 
     <h1><i class="fa fa-shopping-cart"></i> Market Watcher</h1>
 
-    <article id="sectionMarketWatcherActive" v-if="marketWatcher">
-        <h2 class="success centered">Surveillance is active!</h2>
+    <article id="sectionMarketWatcherActive" v-if="isWatching">
+        <h2 class="success centered">Watcher is active!</h2>
         <h3 class="centered">checked <span id="pollCounter">{{ Math.round((Date.now()/1000) - lastPolled) }}</span>s ago</h3><br>
-        <table>
-            <thead>
-                <tr><th>User</th><th>Status</th><th>Market token refills</th><th>Refilled now?</th><th>Attack</th></tr>
-            </thead>
-            <tbody>
-                <tr v-for="user in marketWatcherData.users" :key="user.id">
-                    <td>{{ user.name }}</td>
-                    <td :class="user.status == 'Okay' ? 'success' : 'danger'">{{ user.status }}</td>
-                    <td>{{ user.refills }}</td>
-                    <td>{{ user.refilled ? 'Yes, attack!' : 'Nope, keep waiting...' }}</td>
-                    <td>
-                        <a :href="'https://www.torn.com/loader.php?sid=attack&user2ID=' + user.id" target="blank">
-                            <i class="fa-solid fa-gun fa-2xl" :class="user.refilled ? 'danger fa-beat' : ''"></i>
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        
+        <div id="itemsGrid">
+            <div v-for="(item, itemId) in items" :key="itemId" class="itemCard">
+                <h4>{{ item.name }} <small style="color: #999;">({{ item.type }} - Avg: ${{ item.average_price.toLocaleString() }})</small></h4>
+                <table>
+                    <thead>
+                        <tr><th></th><th>Price</th><th>Amount</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(listing, index) in item.listings" :key="index" :class="{
+                            'great-deal': listing.price < item.average_price * 0.5,
+                            'good-deal': listing.price >= item.average_price * 0.5 && listing.price < item.average_price,
+                            'warning': listing.price >= item.average_price * 1.1 && listing.price <= item.average_price * 1.2,
+                            'expensive': listing.price > item.average_price * 1.2
+                        }">
+                            <td class="icon-cell">
+                                <i v-if="listing.price < item.average_price * 0.5" class="fa-solid fa-star" style="color: #1b5e20;"></i>
+                                <i v-else-if="listing.price < item.average_price" class="fa-solid fa-circle-check" style="color: #2e7d32;"></i>
+                                <i v-else-if="listing.price > item.average_price * 1.2" class="fa-solid fa-triangle-exclamation" style="color: #ff6b6b;"></i>
+                                <i v-else-if="listing.price >= item.average_price * 1.1" class="fa-solid fa-exclamation" style="color: #ffa500;"></i>
+                            </td>
+                            <td>${{ listing.price.toLocaleString() }}</td>
+                            <td>{{ listing.amount }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
 
         <br><br>
 
         <form @submit="stopMarketWatcher">
-            <button type="submit" id="btnSubmitStopMarketWatcher" class="secondary">Stop surveillance</button>
+            <button type="submit" id="btnSubmitStopMarketWatcher" class="secondary">Stop watching</button>
         </form>
 
         <br>
-        <div style="font-size:0.8rem; color:#999;">Debugging:<br>
-            tags: {{ tags.toString().split(',') }}<br>
-            marketWatcher: {{ marketWatcher }}<br>
-            interval: {{ interval }}<br>
-        </div>
 
 
     </article>
 
-    <article id="sectionMarketWatcher" v-else>
-
-        <p class="danger">No websockets were harmed in the making of this marketwatcher!</p>
+    <article id="sectionMarketWatcher" v-if="!isWatching">
 
         <p><small>
             The Market Watcher can be used to snipe good deals on the market.<br>
@@ -186,7 +188,7 @@ export default {
 
             <input type="range" id="inputMarketWatcherInterval" min="5" max="60" step="5" v-model="interval" @change="cacheInterval"><br>
 
-            <button type="submit" id="btnSubmitStartMarketWatcher">Start monitoring</button>
+            <button type="submit" id="btnSubmitStartMarketWatcher">Start watching</button>
         </form>
 
         <span class="centered">
@@ -197,6 +199,8 @@ export default {
         </span>
 
     </article>
+
+    <p class="danger center"><small>No websockets were harmed in the making of this tool</small></p>
 
 
 </template>
@@ -211,5 +215,54 @@ svg.danger {
 }
 svg.danger:hover {
     color:orangered;
+}
+tr.great-deal {
+    background-color: rgba(27, 94, 32, 0.3);
+    font-weight: bold;
+}
+tr.great-deal td {
+    color: #1b5e20;
+}
+tr.good-deal {
+    background-color: rgba(76, 175, 80, 0.2);
+    font-weight: bold;
+}
+tr.good-deal td {
+    color: #2e7d32;
+}
+tr.warning {
+    background-color: rgba(255, 193, 7, 0.15);
+}
+tr.warning td {
+    color: #f57f17;
+}
+tr.expensive {
+    background-color: rgba(255, 107, 107, 0.15);
+}
+tr.expensive td {
+    color: #ff6b6b;
+}
+.icon-cell {
+    text-align: center;
+    width: 2rem;
+}
+#itemsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+.itemCard {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.itemCard h4 {
+    margin-top: 0;
+}
+@media (max-width: 1024px) {
+    #itemsGrid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
