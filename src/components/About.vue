@@ -45,6 +45,8 @@ export default {
 
         0.4.x - xxxx-xx-xx:
         - New feature: Market Watcher - monitor market listings for specific items and get notified when new listings appear
+        - Add highlight icon to navigation icons indicating current page
+        - Minor bugfixes and improvements
         
         0.3.1 - 2026-01-20:
         - Hotfix minor bug in Retal feature
