@@ -1,5 +1,6 @@
 <script>
 import { fetchFromTornViaProxy } from '@/utils/tornProxy.js';
+import { sendNotification } from '@/utils/notificationUtils.js';
 
 export default {
     name: 'Retals',
@@ -25,7 +26,8 @@ export default {
             attacks: [],
             validRetals: [],
             lastChecked: null,
-            now: Date.now()
+            now: Date.now(),
+            notifiedRetals: new Set()
         }
     },
     computed: {
@@ -77,7 +79,22 @@ export default {
                     // Store all attacks and filter valid retals
                     this.attacks = responsedata.attacks || [];
                     this.validRetals = this.filterValidRetals(this.attacks);
+                    
+                    // Check for new retals and send notifications
+                    this.validRetals.forEach(attack => {
+                        if (!this.notifiedRetals.has(attack.id)) {
+                            sendNotification(attack);
+                            this.notifiedRetals.add(attack.id);
+                        }
+                    });
+                    
                     this.lastChecked = Date.now();
+
+                    // sendNotification({   // Test notification
+                    //     attacker: { name: 'Test Attacker', level: 100 },
+                    //     defender: { name: 'Test Defender' },
+                    //     result: 'Test attack result'
+                    // });
 
                     element.setAttribute('aria-busy', 'false');
 
