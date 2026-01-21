@@ -20,6 +20,7 @@ export default {
             timerIntervalId: null,
             items: {},
             isWatching: false,
+            apiRequestsCount: 0
         }
     },
     methods: {
@@ -60,7 +61,8 @@ export default {
                     'Authorization': `ApiKey ${this.user.apiKey}`
                 }
                 fetchFromTornViaProxy(url, headers).then( (responsedata) => {
-                    console.log(responsedata);
+                    // console.log(responsedata);
+                    this.apiRequestsCount += 1;
                     if (responsedata.itemmarket) {
                         const itemData = responsedata.itemmarket;
                         this.items[itemData.item.id] = {
@@ -94,6 +96,29 @@ export default {
                     pollCounter.innerHTML = Math.round((Date.now() / 1000) - this.lastPolled);
                 }
             },1000)
+        },
+        getPricePercentage(price, averagePrice) {
+            // Calculate percentage difference from average price
+            // Returns negative for cheaper, positive for more expensive
+            return Math.round(((price - averagePrice) / averagePrice) * 100);
+        },
+        getPriceColor(price, averagePrice) {
+            // Calculate dynamic RGB color based on price percentage
+            // Green (-50% cheaper) -> Yellow (average) -> Red (+50% expensive)
+            const percentage = this.getPricePercentage(price, averagePrice);
+            
+            // Clamp percentage between -50 and +50
+            const clamped = Math.max(-50, Math.min(50, percentage));
+            
+            // Map clamped value to 0-1 ratio
+            const ratio = (clamped + 50) / 100;
+            
+            // Calculate RGB components
+            const r = Math.round(255 * ratio);
+            const g = Math.round(255 * (1 - ratio));
+            const b = 0;
+            
+            return `rgb(${r}, ${g}, ${b})`;
         }
     },
     mounted() {
@@ -129,22 +154,18 @@ export default {
                 <h4>{{ item.name }} <small style="color: #999;">({{ item.type }} - Avg: ${{ item.average_price.toLocaleString() }})</small></h4>
                 <table>
                     <thead>
-                        <tr><th></th><th>Price</th><th>Amount</th></tr>
+                        <tr><th>Price</th><th>Diff</th><th>Amount</th></tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(listing, index) in item.listings" :key="index" :class="{
-                            'great-deal': listing.price < item.average_price * 0.5,
-                            'good-deal': listing.price >= item.average_price * 0.5 && listing.price < item.average_price,
-                            'warning': listing.price >= item.average_price * 1.1 && listing.price <= item.average_price * 1.2,
-                            'expensive': listing.price > item.average_price * 1.2
-                        }">
-                            <td class="icon-cell">
-                                <i v-if="listing.price < item.average_price * 0.5" class="fa-solid fa-star" style="color: #1b5e20;"></i>
-                                <i v-else-if="listing.price < item.average_price" class="fa-solid fa-circle-check" style="color: #2e7d32;"></i>
-                                <i v-else-if="listing.price > item.average_price * 1.2" class="fa-solid fa-triangle-exclamation" style="color: #ff6b6b;"></i>
-                                <i v-else-if="listing.price >= item.average_price * 1.1" class="fa-solid fa-exclamation" style="color: #ffa500;"></i>
-                            </td>
-                            <td>${{ listing.price.toLocaleString() }}</td>
+                        <tr v-for="(listing, index) in item.listings" :key="index">
+                            <!-- <td class="icon-cell">
+                                <i v-if="listing.price < item.average_price * 0.5" class="fa-solid fa-star"></i>
+                                <i v-else-if="listing.price < item.average_price" class="fa-solid fa-circle-check"></i>
+                                <i v-else-if="listing.price > item.average_price * 1.2" class="fa-solid fa-triangle-exclamation"></i>
+                                <i v-else-if="listing.price >= item.average_price * 1.1" class="fa-solid fa-exclamation"></i>
+                            </td> -->
+                            <td :style="{ color: getPriceColor(listing.price, item.average_price), fontWeight: Math.abs(this.getPricePercentage(listing.price, item.average_price)) > 20 ? 'bold' : 'normal' }">${{ listing.price.toLocaleString() }}</td>
+                            <td :style="{ color: getPriceColor(listing.price, item.average_price), fontWeight: Math.abs(this.getPricePercentage(listing.price, item.average_price)) > 20 ? 'bold' : 'normal' }">{{ this.getPricePercentage(listing.price, item.average_price) }}%</td>
                             <td>{{ listing.amount }}</td>
                         </tr>
                     </tbody>
@@ -152,6 +173,13 @@ export default {
             </div>
         </div>
 
+
+        <br><br>
+
+        <p class="centered"><small>
+            {{ Object.keys(items).length }} items being watched.<br>
+            {{ apiRequestsCount }} API requests made since starting the watcher.
+        </small></p>
 
         <br><br>
 
@@ -178,6 +206,10 @@ export default {
 
         <form @submit="startMarketWatcher">
 
+            <!-- 
+                Parachute, Xan, FHX, Tyrosine
+                106, 206, 367, 814 
+             -->
             <input 
                 type="text" 
                 v-model="itemIds" 
@@ -215,32 +247,6 @@ svg.danger {
 }
 svg.danger:hover {
     color:orangered;
-}
-tr.great-deal {
-    background-color: rgba(27, 94, 32, 0.3);
-    font-weight: bold;
-}
-tr.great-deal td {
-    color: #1b5e20;
-}
-tr.good-deal {
-    background-color: rgba(76, 175, 80, 0.2);
-    font-weight: bold;
-}
-tr.good-deal td {
-    color: #2e7d32;
-}
-tr.warning {
-    background-color: rgba(255, 193, 7, 0.15);
-}
-tr.warning td {
-    color: #f57f17;
-}
-tr.expensive {
-    background-color: rgba(255, 107, 107, 0.15);
-}
-tr.expensive td {
-    color: #ff6b6b;
 }
 .icon-cell {
     text-align: center;
