@@ -12,6 +12,10 @@ export default {
         profile: {
             type: Object,
             required: true
+        },
+        itemDb: {
+            type: Object,
+            required: true
         }
     },
     data() {
@@ -19,12 +23,16 @@ export default {
             interval: 30,
             itemIds: '',
             tags: [],
+            itemTags: [], // Array of objects with id and name
             lastPolled: (Date.now()/1000),
             watcherIntervalId: null,
             timerIntervalId: null,
             items: {},
             isWatching: false,
-            apiRequestsCount: 0
+            apiRequestsCount: 0,
+            filteredSuggestions: [],
+            showSuggestions: false,
+            selectedSuggestionIndex: -1
         }
     },
     methods: {
@@ -33,11 +41,109 @@ export default {
         },
         parseItemIds() {
             // Parse comma-separated input and clean up whitespace
-            this.tags = this.itemIds
+            const inputs = this.itemIds
                 .split(',')
-                .map(id => id.trim())
-                .filter(id => id && /^[0-9]+$/.test(id));
+                .map(input => input.trim())
+                .filter(input => input);
+            
+            // Convert item names to IDs and filter valid entries
+            this.tags = inputs
+                .map(input => {
+                    // Check if input is already a numeric ID
+                    if (/^[0-9]+$/.test(input)) {
+                        return input;
+                    }
+                    // Try to find item by name (case-insensitive)
+                    const itemEntry = Object.entries(this.itemDb).find(
+                        ([id, item]) => item.name.toLowerCase() === input.toLowerCase()
+                    );
+                    return itemEntry ? itemEntry[0] : null;
+                })
+                .filter(id => id !== null);
+            
+            // Lookup item names from itemDb
+            this.itemTags = this.tags.map(id => ({
+                id: id,
+                name: this.itemDb[id]?.name || 'Unknown'
+            }));
+            
             localStorage.setItem('marketWatcherTags', this.tags.join(','));
+            this.updateSuggestions();
+        },
+        getCurrentInputWord() {
+            // Extract the word currently being typed (after the last comma)
+            const lastCommaIndex = this.itemIds.lastIndexOf(',');
+            if (lastCommaIndex === -1) {
+                return this.itemIds.trim();
+            }
+            return this.itemIds.substring(lastCommaIndex + 1).trim();
+        },
+        updateSuggestions() {
+            const currentWord = this.getCurrentInputWord();
+            
+            if (!currentWord || currentWord.length < 1) {
+                this.showSuggestions = false;
+                this.filteredSuggestions = [];
+                return;
+            }
+            
+            const lowerWord = currentWord.toLowerCase();
+            
+            // Filter items from itemDb that match current word
+            this.filteredSuggestions = Object.entries(this.itemDb)
+                .filter(([id, item]) => {
+                    // Don't suggest items already selected
+                    const alreadySelected = this.tags.includes(id);
+                    // Match name or ID
+                    const nameMatch = item.name.toLowerCase().includes(lowerWord);
+                    const idMatch = id.includes(currentWord);
+                    return !alreadySelected && (nameMatch || idMatch);
+                })
+                .map(([id, item]) => ({ id, name: item.name }))
+                .slice(0, 10); // Limit to 10 suggestions
+            
+            this.showSuggestions = this.filteredSuggestions.length > 0;
+            this.selectedSuggestionIndex = -1;
+        },
+        selectSuggestion(suggestion) {
+            // Replace the current word with the selected item
+            const lastCommaIndex = this.itemIds.lastIndexOf(',');
+            const beforeCurrentWord = lastCommaIndex === -1 ? '' : this.itemIds.substring(0, lastCommaIndex + 1);
+            
+            this.itemIds = beforeCurrentWord + (beforeCurrentWord ? ' ' : '') + suggestion.name + ', ';
+            this.parseItemIds();
+            this.showSuggestions = false;
+            
+            // Focus back on input
+            this.$nextTick(() => {
+                this.$refs.itemInput?.focus();
+            });
+        },
+        handleKeyDown(e) {
+            if (!this.showSuggestions) return;
+            
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    this.selectedSuggestionIndex = Math.min(
+                        this.selectedSuggestionIndex + 1,
+                        this.filteredSuggestions.length - 1
+                    );
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    this.selectedSuggestionIndex = Math.max(this.selectedSuggestionIndex - 1, -1);
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (this.selectedSuggestionIndex >= 0) {
+                        this.selectSuggestion(this.filteredSuggestions[this.selectedSuggestionIndex]);
+                    }
+                    break;
+                case 'Escape':
+                    this.showSuggestions = false;
+                    break;
+            }
         },
         async startMarketWatcher(e) {
             e.preventDefault();
@@ -86,13 +192,13 @@ export default {
         },
         stopMarketWatcher(e) {
             try {
-            if(e) { e.preventDefault(); }
-            console.log("Stopping market watcher");
-            clearInterval(this.timerIntervalId);
-            this.timerIntervalId = null;
-            this.isWatching = false;
-            clearInterval(this.watcherIntervalId);
-            this.watcherIntervalId = null;
+                if(e) { e.preventDefault(); }
+                console.log("Stopping market watcher");
+                clearInterval(this.timerIntervalId);
+                this.timerIntervalId = null;
+                this.isWatching = false;
+                clearInterval(this.watcherIntervalId);
+                this.watcherIntervalId = null;
             } catch(err) {
                 console.error("Error stopping market watcher:", err);
             }
@@ -133,6 +239,7 @@ export default {
 
         // Pre-populate torn user ids with cached data
         if (localStorage.getItem('marketWatcherTags') != null) {
+            console.log("Autofilling item ids from cache...");
             this.itemIds = localStorage.getItem('marketWatcherTags');
             this.parseItemIds();
         }
@@ -226,13 +333,31 @@ export default {
                 Parachute, Xan, FHX, Tyrosine
                 106, 206, 367, 814 
              -->
-            <input 
-                type="text" 
-                v-model="itemIds" 
-                @input="parseItemIds"
-                placeholder="Enter item IDs separated by commas (e.g., 2314142, 2935324, 12313)"
-            ><br>
-            <small>Items entered: {{ tags.length > 0 ? tags.join(', ') : 'None' }}</small><br>
+            <div style="position: relative;">
+                <input 
+                    ref="itemInput"
+                    type="text" 
+                    v-model="itemIds" 
+                    @input="parseItemIds"
+                    @keydown="handleKeyDown"
+                    @blur="showSuggestions = false"
+                    placeholder="Enter item names or IDs separated by commas (e.g., xanax, Parachute, 367)"
+                >
+                <div v-if="showSuggestions" class="autocomplete-dropdown">
+                    <div 
+                        v-for="(suggestion, index) in filteredSuggestions" 
+                        :key="suggestion.id"
+                        class="autocomplete-item"
+                        :class="{ 'selected': index === selectedSuggestionIndex }"
+                        @click="selectSuggestion(suggestion)"
+                        @mouseenter="selectedSuggestionIndex = index"
+                    >
+                        {{ suggestion.name }} <small style="color: #999;">({{ suggestion.id }})</small>
+                    </div>
+                </div>
+            </div><br>
+            <small v-if="itemTags.length > 0">Items: {{ itemTags.map(t => `${t.name} (${t.id})`).join(', ') }}</small>
+            <small v-else>Items entered: None</small><br>
 
             <input type="range" id="inputMarketWatcherInterval" min="5" max="60" step="5" v-model="interval" @change="cacheInterval"><br>
 
@@ -267,6 +392,33 @@ svg.danger:hover {
 .icon-cell {
     text-align: center;
     width: 2rem;
+}
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+    background-color: #f0f0f0;
+}
+.autocomplete-item:last-child {
+    border-bottom: none;
 }
 #itemsGrid {
     display: grid;
