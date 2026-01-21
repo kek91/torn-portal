@@ -1,6 +1,6 @@
 <script>
 import { fetchFromTornViaProxy } from '@/utils/tornProxy.js';
-import { sendNotification } from '@/utils/notificationUtils.js';
+import { sendNotification, enableNotifications } from '@/utils/notificationUtils.js';
 
 export default {
     name: 'Retals',
@@ -62,53 +62,51 @@ export default {
         async checkIncomingAttacks() {
 
             try {
+                
                 let element = document.getElementById('retals-content');
-                try {
-                    element.setAttribute('aria-busy', 'true');
+                
+                element.setAttribute('aria-busy', 'true');
 
-                    const url = `https://api.torn.com/v2/faction/attacks?filters=incoming&limit=10&sort=DESC&comment=TornPortal`;
-                    const headers = {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Authorization': `ApiKey ${this.user.apiKey}`
-                    }
-                    const responsedata = await fetchFromTornViaProxy(url, headers);
-                    
-                    console.log(responsedata);
-
-                    // Store all attacks and filter valid retals
-                    this.attacks = responsedata.attacks || [];
-                    this.validRetals = this.filterValidRetals(this.attacks);
-                    
-                    // Check for new retals and send notifications
-                    this.validRetals.forEach(attack => {
-                        if (!this.notifiedRetals.has(attack.id)) {
-                            sendNotification(attack);
-                            this.notifiedRetals.add(attack.id);
-                        }
-                    });
-                    
-                    this.lastChecked = Date.now();
-
-                    // sendNotification({   // Test notification
-                    //     attacker: { name: 'Test Attacker', level: 100 },
-                    //     defender: { name: 'Test Defender' },
-                    //     result: 'Test attack result'
-                    // });
-
-                    element.setAttribute('aria-busy', 'false');
-
-                } catch (e) {
-
-                    this.$notify({
-                        title: "Retals - Torn API error",
-                        text: `${e}`,
-                        type: "error"
-                    });
-                    element.setAttribute('aria-busy', 'false');
+                const url = `https://api.torn.com/v2/faction/attacks?filters=incoming&limit=10&sort=DESC&comment=TornPortal`;
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `ApiKey ${this.user.apiKey}`
                 }
+                const responsedata = await fetchFromTornViaProxy(url, headers);
+                
+                console.log(responsedata);
+
+                // Store all attacks and filter valid retals
+                this.attacks = responsedata.attacks || [];
+                this.validRetals = this.filterValidRetals(this.attacks);
+                
+                // Check for new retals and send notifications
+                this.validRetals.forEach(attack => {
+                    if (!this.notifiedRetals.has(attack.id)) {
+                        sendNotification(attack);
+                        this.notifiedRetals.add(attack.id);
+                    }
+                });
+                
+                this.lastChecked = Date.now();
+
+                // sendNotification({   // Test notification
+                //     attacker: { name: 'Test Attacker', level: 100 },
+                //     defender: { name: 'Test Defender' },
+                //     result: 'Test attack result'
+                // });
+
+                element.setAttribute('aria-busy', 'false');
+
             } catch (e) {
-                // swallow exception
+
+                // this.$notify({
+                //     title: "Retals - Torn API error",
+                //     text: `${e}`,
+                //     type: "error"
+                // });
+                console.error(e);
             }
             return null;
         },
@@ -127,6 +125,8 @@ export default {
         this.intervalId2 = setInterval(() => {
             this.now = Date.now();
         }, 1000);
+
+        enableNotifications();
     },
 
     onBeforeUnmount() {

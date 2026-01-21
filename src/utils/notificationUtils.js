@@ -27,3 +27,21 @@ export function showNotification(attack) {
     };
     new Notification(title, options);
 }
+
+export function enableNotifications() {
+    if (!('Notification' in window)) {
+        console.log('Browser does not support notifications');
+        return;
+    }
+    if (Notification.permission === 'granted') {
+        console.log('Notifications already enabled');
+        return;
+    }
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            console.log('Notifications enabled');
+        } else {
+            console.log('Notifications denied');
+        }
+    });
+}

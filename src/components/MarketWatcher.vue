@@ -1,6 +1,6 @@
 <script>
 import { fetchFromTornViaProxy } from '@/utils/tornProxy.js';
-import { sendNotification } from '@/utils/notificationUtils.js';
+import { sendNotification, enableNotifications } from '@/utils/notificationUtils.js';
 
 export default {
     name: 'MarketWatcher',
@@ -141,6 +141,8 @@ export default {
         if (localStorage.getItem('marketWatcherInterval') != null) {
             this.interval = localStorage.getItem('marketWatcherInterval');
         }
+
+        enableNotifications();
     },
     unmounted() {
         // Clean up intervals when component is unmounted
