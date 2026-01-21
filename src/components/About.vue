@@ -43,6 +43,12 @@ export default {
 
     <pre>
 
+        
+        v0.4.1 - 2025-01-21:
+        - Disable sticky positioning for navigation menu
+        - Add prompt to enable notifications when accessing Market Watcher or Retals for the first time
+        - Hide debug info
+
         0.4.0 - 2025-01-21:
         - New feature: Market Watcher - monitor market listings for specific items and get notified when new listings appear
         - Add highlight icon to navigation icons indicating current page
