@@ -228,6 +228,7 @@ export default {
                     :user="user"
                     :profile="profile"
                     :casinoWatcher="casinoWatcher"
+                    :isDev="isDev"
                     @setRouter="setRouter"
             ></Dashboard>
             <Transactions
@@ -294,7 +295,7 @@ export default {
 
 header {
     background: #333;
-    position: sticky;
+    /* position: sticky; */
     top: 0;
     z-index: 999;
     max-height: 100px;
