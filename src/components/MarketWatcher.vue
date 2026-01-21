@@ -164,7 +164,7 @@ export default {
                 <h4>{{ item.name }} <small style="color: #999;">({{ item.type }} - Avg: ${{ item.average_price.toLocaleString() }})</small></h4>
                 <table>
                     <thead>
-                        <tr><th>Price</th><th>Diff</th><th>Amount</th></tr>
+                        <tr><th>Price</th><th>Diff</th><th>Qty</th><th></th></tr>
                     </thead>
                     <tbody>
                         <tr v-for="(listing, index) in item.listings" :key="index">
@@ -177,6 +177,12 @@ export default {
                             <td :style="{ color: getPriceColor(listing.price, item.average_price), fontWeight: Math.abs(this.getPricePercentage(listing.price, item.average_price)) > 20 ? 'bold' : 'normal' }">${{ listing.price.toLocaleString() }}</td>
                             <td :style="{ color: getPriceColor(listing.price, item.average_price), fontWeight: Math.abs(this.getPricePercentage(listing.price, item.average_price)) > 20 ? 'bold' : 'normal' }">{{ this.getPricePercentage(listing.price, item.average_price) }}%</td>
                             <td>{{ listing.amount }}</td>
+                            <td>
+                                <a :href="'https://www.torn.com/page.php?sid=ItemMarket#/market/view=search&itemID=' + itemId"
+                                    target="blank" class="secondary">
+                                    <i class="fa fa-shopping-cart fa-xl"></i>
+                                </a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
