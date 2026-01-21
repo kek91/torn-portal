@@ -14,6 +14,10 @@ export default {
         casinoWatcher: {
             type: Number,
             required: false
+        },
+        isDev: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -123,9 +127,9 @@ export default {
         Sorry, unable to fetch data...
     </article>
 
-    <a href="#" id="btnFetchProfile" role="button" @click="fetchProfile">Refresh</a>
+    <!-- <a href="#" id="btnFetchProfile" role="button" @click="fetchProfile">Refresh</a> -->
 
-    <article class="debuginfo">
+    <article class="debuginfo" v-if="isDev">
 
         <p><b>Debug info</b></p>
 
