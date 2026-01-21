@@ -8,6 +8,10 @@ export default {
         user: {
             type: Object,
             required: true
+        },
+        profile: {
+            type: Object,
+            required: true
         }
     },
     data() {
@@ -42,6 +46,10 @@ export default {
             console.log(`Item IDs: ${this.tags}`);
             console.log(`Poll interval: ${this.interval}`);
 
+            if (this.profile.faction.faction_tag !== "EMU") {
+                alert("Sorry, the market watcher is only available for Viking Emus so far.");
+                return;
+            }
 
             let interval = Math.max(this.interval, 5) * 1000;
             this.watcherIntervalId = setInterval(this.pollMarketWatcher, interval, this.tags);

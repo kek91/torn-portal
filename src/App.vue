@@ -256,6 +256,7 @@ export default {
             <MarketWatcher
                     v-else-if="router === 'marketwatcher'"
                     :user="user"
+                    :profile="profile"
             ></MarketWatcher>
             <JobPoints
                     v-else-if="router === 'jobpoints'"
