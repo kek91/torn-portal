@@ -13,6 +13,7 @@ import War from "@/components/War.vue";
 import Retals from "@/components/Retals.vue";
 import {useNotification} from "@kyvg/vue3-notification";
 import {version} from '../package.json'
+import { fetchFromTornViaProxy } from '@/utils/tornProxy.js';
 
 const {notify} = useNotification()
 
@@ -43,7 +44,8 @@ export default {
             marketWatcher: null,
             marketWatcherData: null,
             // isDev: (window.location.hostname.indexOf("localhost") !== -1)
-            isDev: false
+            isDev: false,
+            itemDb: null
         }
     },
     methods: {
@@ -126,6 +128,25 @@ export default {
                     html.setAttribute('data-theme', 'dark');
                 }
             }
+        },
+        fetchTornItemDatabase() {
+            const url = `https://api.torn.com/v2/torn/items?sort=ASC&comment=TornHelper`;
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `ApiKey ${this.user.apiKey}`
+            }
+            fetchFromTornViaProxy(url, headers).then( (response) => {
+
+                let items = [];
+                items.push({id: 0, name: "Unknown", circulation: 0, type: "Unknown", market_price: 0});
+                response.items.forEach( (item) => {
+                    console.log(`Item ID:${item.id} , name:${item.name}, Circ:${item.circulation}, Type: ${item.type}, Market price:${item.value.market_price}`);
+                    items.push({id: item.id, name: item.name, circulation: item.circulation, type: item.type, market_price: item.value.market_price});
+                });
+                localStorage.setItem('itemDb', JSON.stringify(items));
+                return items;
+            });
         }
     },
     mounted() {
@@ -143,6 +164,15 @@ export default {
         // use router if url entered manually
         if (window.location.hash) {
             this.setRouter(window.location.hash.replace('#', ''));
+        }
+
+        /* Cache torn metadata for later use */
+        if (localStorage.getItem('itemDb') == null) {
+            console.log("Fetching Torn metadata for later use...");
+            this.itemDb = this.fetchTornItemDatabase();
+        } else {
+            console.log("Loading Torn metadata from cache...");
+            this.itemDb = JSON.parse(localStorage.getItem('itemDb'));
         }
 
         // this.user = null;
@@ -258,6 +288,7 @@ export default {
                     v-else-if="router === 'marketwatcher'"
                     :user="user"
                     :profile="profile"
+                    :itemDb="itemDb"
             ></MarketWatcher>
             <JobPoints
                     v-else-if="router === 'jobpoints'"
