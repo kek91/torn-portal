@@ -101,7 +101,7 @@ export default {
                 } catch (e) {
 
                     this.$notify({
-                        title: "Torn API error",
+                        title: "Retals - Torn API error",
                         text: `${e}`,
                         type: "error"
                     });
