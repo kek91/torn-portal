@@ -43,7 +43,7 @@ export default {
 
     <pre>
 
-        0.4.x - xxxx-xx-xx:
+        0.4.0 - 2025-01-21:
         - New feature: Market Watcher - monitor market listings for specific items and get notified when new listings appear
         - Add highlight icon to navigation icons indicating current page
         - Minor bugfixes and improvements
