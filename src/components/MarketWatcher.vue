@@ -106,6 +106,7 @@ export default {
             this.selectedSuggestionIndex = -1;
         },
         selectSuggestion(suggestion) {
+            console.log("selected suggestion:", suggestion);
             // Replace the current word with the selected item
             const lastCommaIndex = this.itemIds.lastIndexOf(',');
             const beforeCurrentWord = lastCommaIndex === -1 ? '' : this.itemIds.substring(0, lastCommaIndex + 1);
@@ -341,6 +342,8 @@ export default {
                     @input="parseItemIds"
                     @keydown="handleKeyDown"
                     @blur="showSuggestions = false"
+                    @click="showSuggestions = true"
+                    @focus="showSuggestions = true"
                     placeholder="Enter item names or IDs separated by commas (e.g., xanax, Parachute, 367)"
                 >
                 <div v-if="showSuggestions" class="autocomplete-dropdown">
@@ -349,7 +352,7 @@ export default {
                         :key="suggestion.id"
                         class="autocomplete-item"
                         :class="{ 'selected': index === selectedSuggestionIndex }"
-                        @click="selectSuggestion(suggestion)"
+                        @mousedown="selectSuggestion(suggestion)"
                         @mouseenter="selectedSuggestionIndex = index"
                     >
                         {{ suggestion.name }} <small style="color: #999;">({{ suggestion.id }})</small>
@@ -407,15 +410,36 @@ svg.danger:hover {
     z-index: 1000;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+@media (prefers-color-scheme: dark) {
+    .autocomplete-dropdown {
+        background: #2d2d2d;
+        border: 1px solid #444;
+        border-top: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+}
 .autocomplete-item {
     padding: 8px 12px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
     font-size: 14px;
+    color: inherit;
+}
+@media (prefers-color-scheme: dark) {
+    .autocomplete-item {
+        border-bottom: 1px solid #444;
+        color: #e0e0e0;
+    }
 }
 .autocomplete-item:hover,
 .autocomplete-item.selected {
     background-color: #f0f0f0;
+}
+@media (prefers-color-scheme: dark) {
+    .autocomplete-item:hover,
+    .autocomplete-item.selected {
+        background-color: #404040;
+    }
 }
 .autocomplete-item:last-child {
     border-bottom: none;
