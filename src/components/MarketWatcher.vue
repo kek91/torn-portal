@@ -269,7 +269,10 @@ export default {
         
         <div id="itemsGrid">
             <div v-for="(item, itemId) in items" :key="itemId" class="itemCard">
-                <h4>{{ item.name }} <small style="color: #999;">({{ item.type }} - Avg: ${{ item.average_price.toLocaleString() }})</small></h4>
+                <b>
+                    {{ item.name }}<br>
+                    <small style="color: #999;">{{ item.type }} - Avg: ${{ item.average_price.toLocaleString() }}</small>
+                </b>
                 <table>
                     <thead>
                         <tr><th>Price</th><th>Diff</th><th>Qty</th><th></th></tr>
@@ -447,13 +450,13 @@ svg.danger:hover {
 #itemsGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 .itemCard {
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 2px;
+    /* border: 1px solid #ddd;
+    border-radius: 4px; */
 }
 .itemCard h4 {
     margin-top: 0;
@@ -461,6 +464,13 @@ svg.danger:hover {
 @media (max-width: 1024px) {
     #itemsGrid {
         grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 390px) {
+    article {
+        padding:2px;
+        overflow:hidden;
+        font-size:0.9rem;
     }
 }
 </style>
