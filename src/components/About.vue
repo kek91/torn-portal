@@ -43,6 +43,9 @@ export default {
 
     <pre>
 
+        v0.4.2 - xx:
+        - Add support for darkmode + mouseclick in Market watcher autocomplete input field
+        - 
         
         v0.4.1 - 2025-01-21:
         - Disable sticky positioning for navigation menu
