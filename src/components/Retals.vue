@@ -80,11 +80,15 @@ export default {
                 // Store all attacks and filter valid retals
                 this.attacks = responsedata.attacks || [];
                 this.validRetals = this.filterValidRetals(this.attacks);
-                
-                // Check for new retals and send notifications
+
+                // Check for new retals and send notifications (only 1)
+                let notified = false;
                 this.validRetals.forEach(attack => {
                     if (!this.notifiedRetals.has(attack.id)) {
-                        sendNotification(attack);
+                        if (!notified) {
+                            sendNotification(attack);
+                        }
+                        notified = true;
                         this.notifiedRetals.add(attack.id);
                     }
                 });
