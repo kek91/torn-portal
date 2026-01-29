@@ -43,6 +43,9 @@ export default {
 
     <pre>
 
+        v0.4.3 - xx.xx.xx:
+        - Limit notifications so we don't spam incase of several retals available
+
         v0.4.2 - 2025-01-22:
         - Add support for darkmode + mouseclick in Market watcher autocomplete input field
         - Make market watcher more responsive on small screens
