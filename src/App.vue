@@ -247,6 +247,24 @@ export default {
 
     </header>
     <main>
+        <div style="border:1px solid indianred; padding:10px; margin:10px 0 30px 0;">
+            <h1>New website URL</h1>
+            <small class="">
+                Hey there!
+                <br>
+                Just a quick heads up that Torn-Portal has a new home at:
+                <br>
+                <span style="font-size:1.4rem;"><a href="https://torn.teknix.no" target="_blank">https://torn.teknix.no</a></span>
+                <br>
+                <br>
+                The current URL (torn-portal.netlify.app) will continue working for now but it won't receive further updates.
+                <br>
+                See you on the other side :)
+                <br>
+                <br>
+                <i>- Kvassh <small>(2026-03-18)</small></i>
+            </small>
+        </div>
         <Login
                 v-if="user == null"
                 @setUser="setUser"
